@@ -34,7 +34,7 @@ var userSchema = mongoose.Schema({
     campus: String,
     cursus: String,
     address: String,
-    jobs: [jobSchema],
+    post: [postSchema],
     linkRs: [linkSchema],
     tags: [tagSchema],
     buddies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'buddies' }],
