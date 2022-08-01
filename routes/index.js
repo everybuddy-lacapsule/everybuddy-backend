@@ -12,8 +12,6 @@ router.get("/", function (req, res, next) {
  */
 var JobModel = require("../models/jobs");
 var TagModel = require("../models/tags");
-const { aggregate } = require("../models/users");
-const { response } = require("express");
 
 const calculRadius = (longDegree, latDegree, radius) => {
   let diffLongFr = Number(radius)*0.054;
@@ -41,6 +39,7 @@ router.get("/searchByLocation", async(req, res, next) => {
     });
   
   // On crée un radius de 10km autour du point de recherche 
+  // voir fonction en haut du fichier
   let radius = 10;
   let coordinate = calculRadius(location.long, location.lat, radius);
 
@@ -50,7 +49,7 @@ router.get("/searchByLocation", async(req, res, next) => {
  console.log(users)
 var success = false;
  users.length>0 ? success=true : success=false;
- res.json(success, users)
+ res.json({success, users})
 });
 
 // Route Location in Onboarding
@@ -74,10 +73,6 @@ router.post("/addLocation", async (req, res, next) => {
       { _id: req.body.id},{
         address: location
       });
-    // var update = await UserModel.updateOne(
-    //    { _id: req.body.id},
-    //   { address: [loca] }
-    // );
 
 });
 
