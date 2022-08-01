@@ -2,7 +2,6 @@ var express = require("express");
 var router = express.Router();
 var UserModel = require("../models/users");
 
-/* GET users listing. */
 router.post("/sign-in", async function (req, res, next) {
   var errorMessage = '';
   var isLogin = false;
@@ -25,7 +24,7 @@ router.post("/sign-in", async function (req, res, next) {
     errorMessage = "Adresse email invalide";
   }
 
-  res.json({ isLogin, errorMessage });
+  res.json({ isLogin, errorMessage, userID: user._id });
 });
 
 module.exports = router;
