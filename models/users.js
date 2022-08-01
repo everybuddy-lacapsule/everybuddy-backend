@@ -18,6 +18,13 @@ var tagSchema =  mongoose.Schema({
     github: String
 });
 
+var addressSchema = mongoose.Schema({
+    long: Number,
+    lat: Number,
+    city: String,
+    country: String
+});
+
 /* ------------Collection principal---------- */
 var userSchema = mongoose.Schema({
     admin: Boolean,
@@ -33,8 +40,8 @@ var userSchema = mongoose.Schema({
     nbBatch: Number,
     campus: String,
     cursus: String,
-    address: String,
-    post: [postSchema],
+    address: addressSchema,
+    post: postSchema,
     linkRs: [linkSchema],
     tags: [tagSchema],
     buddies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'buddies' }],
