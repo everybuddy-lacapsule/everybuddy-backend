@@ -4,14 +4,28 @@ var UserModel = require("../models/users");
 
 /* GET users listing. */
 router.post("/sign-in", async function (req, res, next) {
-  var saved = false;
+  var errorMessage = '';
+  var isLogin = false;
   var user = await UserModel.findOne({
     email: req.body.email,
   });
-  if (user.email === req.body.email && user.pwd === req.body.pwd) {
-    saved = true;
+
+  if (!req.body.email || !req.body.pwd) {
+    isLogin = false;
+    errorMessage = "Veuillez remplir tous les champs";
+  } else if (user) {
+    if (user.pwd !== req.body.pwd) {
+      isLogin = false;
+      errorMessage = "Votre password est incorrect";
+    } else {
+      isLogin = true;
+    }
+  } else {
+    isLogin = false;
+    errorMessage = "Adresse email invalide";
   }
-  res.json({ saved });
+
+  res.json({ isLogin, errorMessage });
 });
 
 module.exports = router;
