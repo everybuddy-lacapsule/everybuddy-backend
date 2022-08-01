@@ -12,28 +12,48 @@ router.get("/", function (req, res, next) {
  */
 var JobModel = require("../models/jobs");
 var TagModel = require("../models/tags");
+const { aggregate } = require("../models/users");
+const { response } = require("express");
 
+const calculRadius = (longDegree, latDegree, radius) => {
+  let diffLongFr = Number(radius)*0.054;
+  let diffLatFr = Number(radius)*0.009;
+  let longMaxDegree = Number(longDegree) + diffLongFr;
+  let longMinDegree = Number(longDegree) - diffLongFr;
+  let latMaxDegree = Number(latDegree) + diffLatFr;
+  let latMinDegree = Number(latDegree) - diffLatFr;
+  return {longMaxDegree, longMinDegree, latMaxDegree, latMinDegree}
+};
 
-
-module.exports = router;
-
-router.get("/searchByLocation",(req, res, next) => {
+// Route Location in Search Bar
+router.get("/searchByLocation", async(req, res, next) => {
   const params = {
     auth: '138947957945081132130x13101',
     locate: req.query.location,
     json: '1'
   }
-  
-  axios.get('https://geocode.xyz?region=FR',{params})
+  var location
+  await axios.get('https://geocode.xyz?region=FR',{params})
     .then(response => {
-      var location = {long: response.data.longt, lat: response.data.latt, city: response.data.standard.city, country: response.data.standard.prov }
-      res.json(location);
+      location = {long: response.data.longt, lat: response.data.latt}
     }).catch(error => {
       console.log(error);
-    });  
+    });
+  
+  // On crée un radius de 10km autour du point de recherche 
+  let radius = 10;
+  let coordinate = calculRadius(location.long, location.lat, radius);
+
  
+  var users = await UserModel.find({'address.long':{$gte : coordinate.longMinDegree, $lte: coordinate.longMaxDegree}, 'address.lat': {$gte : coordinate.latMinDegree, $lte: coordinate.latMaxDegree}})
+
+ console.log(users)
+var success = false;
+ users.length>0 ? success=true : success=false;
+ res.json(success, users)
 });
 
+// Route Location in Onboarding
 router.post("/addLocation", async (req, res, next) => {
   const params = {
     auth: '138947957945081132130x13101',
@@ -61,3 +81,5 @@ router.post("/addLocation", async (req, res, next) => {
 
 });
 
+
+module.exports = router;
