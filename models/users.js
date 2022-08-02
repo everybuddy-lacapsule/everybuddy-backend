@@ -1,11 +1,11 @@
 var mongoose = require("mongoose");
 
 /* ------------Sub-documents schema---------- */
-var postSchema = mongoose.Schema({
-  post: String,
+var workSchema = mongoose.Schema({
+  work: String,
   company: String,
   dateDebut: Date,
-  typePost: String,
+  typeWork: String,
 });
 
 var linkSchema = mongoose.Schema({
@@ -34,6 +34,7 @@ var addressSchema = mongoose.Schema({
 /* ------------Collection principal---------- */
 var userSchema = mongoose.Schema({
   admin: Boolean,
+  onboarding: false,
   firstName: String,
   name: String,
   email: String,
@@ -47,7 +48,7 @@ var userSchema = mongoose.Schema({
   campus: String,
   cursus: String,
   address: addressSchema,
-  post: postSchema,
+  work: workSchema,
   linkRs: [linkSchema],
   tags: [tagSchema],
   buddies: [{ type: mongoose.Schema.Types.ObjectId, ref: "buddies" }],
