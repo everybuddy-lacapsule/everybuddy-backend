@@ -18,7 +18,7 @@ router.post("/check-email", async function (req, res, next) {
     emailExists = true;
   }
 
-  res.json({ emailExists, errorMessage });
+  res.json({ emailExists, errorMessage, userEmail : user.email });
 });
 
 // ROUTE qui vérifie si email et pwd existent en BDD relié à LoginScreen
@@ -44,7 +44,7 @@ router.post("/sign-in", async function (req, res, next) {
     errorMessage = "Adresse email invalide";
   }
 
-  res.json({ isLogin, errorMessage });
+  res.json({ isLogin, errorMessage, userID: user._id });
 });
 
 
