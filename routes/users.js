@@ -5,6 +5,7 @@ var UserModel = require("../models/users");
 // ROUTE QUI VERIFIE SI EMAIL EXISTE EN BDD
 router.post("/check-email", async function (req, res, next) {
   var errorMessage = '';
+  var userEmail = '';
   var emailExists = false;
   var user = await UserModel.findOne({
     email: req.body.email,
@@ -15,9 +16,9 @@ router.post("/check-email", async function (req, res, next) {
     errorMessage = "Veuillez indiquer un email valide";
   } else {
     emailExists = true;
+    userEmail = user.email;
   }
-
-  res.json({ emailExists, errorMessage });
+  res.json({ emailExists, errorMessage, userEmail });
 });
 
 /* GET users listing. */
