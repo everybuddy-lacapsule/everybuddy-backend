@@ -2,10 +2,15 @@ var express = require("express");
 var router = express.Router();
 var UserModel = require("../models/users");
 
+<<<<<<< HEAD
 
 // ROUTE QUI VERIFIE SI EMAIL EXISTE EN BDD relié à CheckEmailScreen
+=======
+// ROUTE QUI VERIFIE SI EMAIL EXISTE EN BDD
+>>>>>>> cc9859e08502664f6ec48f8a7703050ccade5273
 router.post("/check-email", async function (req, res, next) {
   var errorMessage = '';
+  var userEmail = '';
   var emailExists = false;
   var user = await UserModel.findOne({
     email: req.body.email,
@@ -16,9 +21,14 @@ router.post("/check-email", async function (req, res, next) {
     errorMessage = "Veuillez indiquer un email valide";
   } else {
     emailExists = true;
+    userEmail = user.email;
   }
+<<<<<<< HEAD
 
   res.json({ emailExists, errorMessage, userEmail : user.email });
+=======
+  res.json({ emailExists, errorMessage, userEmail });
+>>>>>>> cc9859e08502664f6ec48f8a7703050ccade5273
 });
 
 // ROUTE qui vérifie si email et pwd existent en BDD relié à LoginScreen
