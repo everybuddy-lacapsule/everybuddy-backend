@@ -27,6 +27,7 @@ router.post("/check-email", async function (req, res, next) {
 router.post("/sign-in", async function (req, res, next) {
   var errorMessage = '';
   var isLogin = false;
+  var userID = '';
   var user = await UserModel.findOne({
     email: req.body.email,
   });
@@ -40,13 +41,14 @@ router.post("/sign-in", async function (req, res, next) {
       errorMessage = "Votre password est incorrect";
     } else {
       isLogin = true;
+      userID = user._id
     }
   } else {
     isLogin = false;
     errorMessage = "Adresse email invalide";
   }
 
-  res.json({ isLogin, errorMessage, userID: user._id });
+  res.json({ isLogin, errorMessage, userID });
 });
 
 
