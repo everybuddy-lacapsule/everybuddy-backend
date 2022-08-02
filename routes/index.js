@@ -49,7 +49,7 @@ router.get("/searchByLocation", async(req, res, next) => {
  console.log(users)
 var success = false;
  users.length>0 ? success=true : success=false;
- res.json({success, users})
+ res.json({success, users, location})
 });
 
 // Route Location in Onboarding
