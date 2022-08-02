@@ -3,7 +3,7 @@ var router = express.Router();
 var UserModel = require("../models/users");
 
 
-// ROUTE QUI VERIFIE SI EMAIL EXISTE EN BDD
+// ROUTE QUI VERIFIE SI EMAIL EXISTE EN BDD relié à CheckEmailScreen
 router.post("/check-email", async function (req, res, next) {
   var errorMessage = '';
   var emailExists = false;
@@ -21,7 +21,7 @@ router.post("/check-email", async function (req, res, next) {
   res.json({ emailExists, errorMessage });
 });
 
-/* GET users listing. */
+// ROUTE qui vérifie si email et pwd existent en BDD relié à LoginScreen
 router.post("/sign-in", async function (req, res, next) {
   var errorMessage = '';
   var isLogin = false;
