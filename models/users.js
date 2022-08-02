@@ -34,7 +34,7 @@ var addressSchema = mongoose.Schema({
 /* ------------Collection principal---------- */
 var userSchema = mongoose.Schema({
   admin: Boolean,
-  onboarding: false,
+  onboarding: Boolean,
   firstName: String,
   name: String,
   email: String,
