@@ -63,6 +63,9 @@ router.get("/searchByLocation", async (req, res, next) => {
   res.json({ success, users, location });
 });
 
+router.post("/advancedSearch", async (req, res, next) => {
+});
+
 // Route Location in Onboarding
 router.post("/addLocation", async (req, res, next) => {
   const params = {
