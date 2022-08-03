@@ -35,15 +35,13 @@ router.get("/searchByLocation", async (req, res, next) => {
         long: Number.parseFloat(response.data.longt),
         lat: Number.parseFloat(response.data.latt),
       };
-      //console.log(location);
     })
     .catch((error) => {
       console.log(error);
     });
 
-  // On crée un radius de 10km autour du point de recherche
-  // voir fonction en haut du fichier
-  let radius = 10;
+  //radius en km 
+  let radius = 5;
   let coordinate = calculRadius(location.long, location.lat, radius);
 
   var users = await UserModel.find({
@@ -56,8 +54,6 @@ router.get("/searchByLocation", async (req, res, next) => {
       $lte: coordinate.latMaxDegree,
     },
   });
-
-  console.log(users);
   var success = false;
   users.length > 0 ? (success = true) : (success = false);
   res.json({ success, users, location });
@@ -81,8 +77,6 @@ router.post("/addLocation", async (req, res, next) => {
         country: response.data.standard.prov,
       };
       res.json(location);
-      console.log(location);
-      //res.json(location)
     })
     .catch((error) => {
       console.log(error);
@@ -93,6 +87,81 @@ router.post("/addLocation", async (req, res, next) => {
       address: location,
     }
   );
+});
+
+// Route Location in Search Bar
+router.get("/advancedSearch", async (req, res, next) => {
+  var locationRequest = 'lyon'
+  if(req.query.location) {
+    locationRequest = req.query.location;
+  };
+  var radius = 1000
+  if(req.query.radius) {
+    radius = req.query.radius;
+  };
+
+  const params = {
+    auth: API_MAP_TOKEN,
+    locate: locationRequest,
+    json: "1",
+  };
+  var location;
+  await axios
+    .get("https://geocode.xyz?region=FR", { params })
+    .then((response) => {
+      location = {
+        long: Number.parseFloat(response.data.longt),
+        lat: Number.parseFloat(response.data.latt),
+      };
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
+  //radius en km 
+  let coordinate = calculRadius(location.long, location.lat, radius);
+  // default batch treatment
+  var nbBatch = req.query.nbBatch
+  if (!req.query.nbBatch){
+    nbBatch = {$gte: 1
+    }
+  }
+  // default cursus treatment
+  var cursus = req.query.cursus
+  if (!req.query.cursus){
+    cursus = ['Fullstack', 'DevOps', 'Code for business']
+    
+  }
+  // default campus treatment
+  var campus = req.query.campus
+  if (!req.query.campus){
+    campus = ['Paris', 
+    'Lyon', 
+    'Marseille', 
+    'Nice', 
+    'Lille', 
+    'Bordeaux',
+    'Bruxelles',
+    'Monaco']
+    
+  }
+
+  var users = await UserModel.find({
+    "address.long": {
+      $gte: coordinate.longMinDegree,
+      $lte: coordinate.longMaxDegree,
+    },
+    "address.lat": {
+      $gte: coordinate.latMinDegree,
+      $lte: coordinate.latMaxDegree,
+    },
+    "capsule.nbBatch": nbBatch,
+    "capsule.cursus": cursus,
+    "capsule.campus": campus,
+  });
+  var success = false;
+  users.length > 0 ? (success = true) : (success = false);
+  res.json({ success, users, location });
 });
 
 module.exports = router;

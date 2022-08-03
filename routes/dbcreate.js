@@ -15,9 +15,11 @@ const users = [
       presentation: "",
       searchCurrent: "",
       tel: 623455589,
-      nbBatch: 55,
-      campus: "Paris",
-      cursus: "Dev web",
+      capsule: {
+        nbBatch: 55,
+        campus: "Paris",
+        cursus: "Dev web",
+      },
       address: {long: 2.34280, lat: 48.85756, city: "Paris", country: "FR" },
       work: 
       {
@@ -43,9 +45,11 @@ const users = [
       presentation: "",
       searchCurrent: "",
       tel: 623456789,
-      nbBatch: 55,
-      campus: "Lyon",
-      cursus: "Data Scientist",
+      capsule: {
+        nbBatch: 55,
+        campus: "Lyon",
+        cursus: "Data Scientist",
+      },
       address: {long: 4.84890, lat: 45.75466, city: "Lyon", country: "FR" },
       work: 
         {
@@ -71,9 +75,11 @@ const users = [
       presentation: "",
       searchCurrent: "",
       tel: 623455009,
-      nbBatch: 55,
-      campus: "Paris",
-      cursus: "Dev web",
+      capsule: {
+        nbBatch: 55,
+        campus: "Paris",
+        cursus: "Dev web",
+      },
       address: {long: 4.84890, lat: 45.75466, city: "Lyon", country: "FR" },
       work: 
         {
