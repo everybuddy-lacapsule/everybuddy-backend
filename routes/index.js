@@ -6,7 +6,17 @@ var BuddyModel = require("../models/buddies");
 const axios = require("axios");
 require("dotenv").config();
 const { API_MAP_TOKEN } = process.env;
+const NodeGeocoder = require('node-geocoder');
+const options = {
+  provider: 'google',
 
+  // Optional depending on the providers
+  // apiKey: 'pk.eyJ1IjoiZXZlcnlidWRkeSIsImEiOiJjbDZkbnc2OGUwMG5uM2RyeTFxZWNjOWRjIn0._XThOJWHkfRMUiTJSFo9tg', // for Mapquest, OpenCage, Google Premier
+  apiKey:'AIzaSyCmYCOijfX6n3fsTcuJsT5J2Uz_Lb7p4VY',
+  formatter: null // 'gpx', 'string', ...
+};
+
+const geocoder = NodeGeocoder(options);
 var JobModel = require("../models/jobs");
 var TagModel = require("../models/tags");
 
@@ -22,23 +32,12 @@ const calculRadius = (longDegree, latDegree, radius) => {
 
 // Route Location in Search Bar
 router.get("/searchByLocation", async (req, res, next) => {
-  const params = {
-    auth: API_MAP_TOKEN,
-    locate: req.query.location,
-    json: "1",
+  var location
+  const response = await geocoder.geocode(req.query.location);
+  location = {
+    long: Number.parseFloat(response[0].longitude),
+    lat: Number.parseFloat(response[0].latitude)
   };
-  var location;
-  await axios
-    .get("https://geocode.xyz?region=FR", { params })
-    .then((response) => {
-      location = {
-        long: Number.parseFloat(response.data.longt),
-        lat: Number.parseFloat(response.data.latt),
-      };
-    })
-    .catch((error) => {
-      console.log(error);
-    });
 
   //radius en km 
   let radius = 5;
@@ -64,26 +63,13 @@ router.post("/advancedSearch", async (req, res, next) => {
 
 // Route Location in Onboarding
 router.post("/addLocation", async (req, res, next) => {
-  const params = {
-    auth: API_MAP_TOKEN,
-    locate: req.body.location,
-    json: "1",
+  var location
+  const response = await geocoder.geocode(req.query.location);
+  location = {
+    long: Number.parseFloat(response[0].longitude),
+    lat: Number.parseFloat(response[0].latitude)
   };
-  var location;
-  await axios
-    .get("https://geocode.xyz?region=FR", { params })
-    .then((response) => {
-      location = {
-        long: response.data.longt,
-        lat: response.data.latt,
-        city: response.data.standard.city,
-        country: response.data.standard.prov,
-      };
-      res.json(location);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+
   await UserModel.updateOne(
     { _id: req.body.id },
     {
@@ -94,32 +80,22 @@ router.post("/addLocation", async (req, res, next) => {
 
 // Route Location in Search Bar
 router.get("/advancedSearch", async (req, res, next) => {
-  var locationRequest = 'lyon'
-  if(req.query.location) {
-    locationRequest = req.query.location;
+  var locationRequest = req.query.location
+  if(!req.query.location) {
+    locationRequest = 'bourges, 18000';
   };
-  var radius = 1000
-  if(req.query.radius) {
-    radius = req.query.radius;
+  var radius = req.query.radius
+  if(!req.query.radius) {
+    radius = 10000;
   };
 
-  const params = {
-    auth: API_MAP_TOKEN,
-    locate: locationRequest,
-    json: "1",
+  var location
+  const response = await geocoder.geocode(locationRequest);
+  location = {
+    long: Number.parseFloat(response[0].longitude),
+    lat: Number.parseFloat(response[0].latitude)
   };
-  var location;
-  await axios
-    .get("https://geocode.xyz?region=FR", { params })
-    .then((response) => {
-      location = {
-        long: Number.parseFloat(response.data.longt),
-        lat: Number.parseFloat(response.data.latt),
-      };
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  console.log(location)
 
   //radius en km 
   let coordinate = calculRadius(location.long, location.lat, radius);
@@ -133,7 +109,6 @@ router.get("/advancedSearch", async (req, res, next) => {
   var cursus = req.query.cursus
   if (!req.query.cursus){
     cursus = ['Fullstack', 'DevOps', 'Code for business']
-    
   }
   // default campus treatment
   var campus = req.query.campus
@@ -146,7 +121,31 @@ router.get("/advancedSearch", async (req, res, next) => {
     'Bordeaux',
     'Bruxelles',
     'Monaco']
-    
+  }
+  // default work treatment
+  var work = req.query.work
+  if (!req.query.work){
+    work = ['Développeur',
+       'Product Owner',
+      'Data Scientist',
+      'Dev Ops',
+      'Scrum Master']
+  }
+  // default typeWork treatment
+  var typeWork = req.query.typeWork
+  if (!req.query.typeWork){
+    typeWork = [
+      'Entrepreneur',
+      'En contrat',
+      'Freelance',
+      'En recherche',
+    ]
+  }
+  // default tags treatment
+  var tags = req.query.tags
+  console.log(tags)
+  if (!req.query.tags){
+    tags = 'Frontend, Backend, FullStack, JavaScript, AngularJS, ReactJS, VueJS, TypeScript, ReactNative, Swift , Kotlin, Flutter, BDD, API, Java, Python, PHP'
   }
 
   var users = await UserModel.find({
@@ -161,6 +160,9 @@ router.get("/advancedSearch", async (req, res, next) => {
     "capsule.nbBatch": nbBatch,
     "capsule.cursus": cursus,
     "capsule.campus": campus,
+    "work.work": work,
+    "work.typeWork": typeWork,
+    tags: {$in: tags.split(', ')},
   });
   var success = false;
   users.length > 0 ? (success = true) : (success = false);
