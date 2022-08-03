@@ -2,6 +2,16 @@ var express = require("express");
 var router = express.Router();
 var UserModel = require("../models/users");
 
+router.get("/getUserDatas", async (req, res, next) => {
+  var userDatas;
+  var user = await UserModel.findOne({
+    _id: req.query.userID,
+  });
+  if (user) {
+    userDatas = user;
+  }
+  res.json({ userDatas });
+});
 
 // ROUTE QUI VERIFIE SI EMAIL EXISTE EN BDD relié à CheckEmailScreen
 router.post("/check-email", async function (req, res, next) {
