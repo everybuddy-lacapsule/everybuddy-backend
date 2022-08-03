@@ -1,14 +1,18 @@
-var mongoose = require('mongoose');
+require("dotenv").config();
+const mongoose = require("mongoose");
 
-var options = {
-    connectTimeoutMS: 5000,
-    useUnifiedTopology : true,
-    useNewUrlParser: true,
-}
+const { DB_LOGIN, DB_PWD, DB_HOSTNAME, DB_NAME } = process.env;
 
-mongoose.connect('mongodb+srv://everybuddy:mukm1MT8a3wIAqT3@everybuddy.z8bet.mongodb.net/everybuddy?retryWrites=true&w=majority',
-    options,
-    function(err){
-        console.log(err);
-    }
+const options = {
+  connectTimeoutMS: 5000,
+  useUnifiedTopology: true,
+  useNewUrlParser: true,
+};
+
+mongoose.connect(
+  `mongodb+srv://${DB_LOGIN}:${DB_PWD}@${DB_HOSTNAME}/${DB_NAME}?retryWrites=true&w=majority`,
+  options,
+  function (err) {
+    console.log(err);
+  }
 );
