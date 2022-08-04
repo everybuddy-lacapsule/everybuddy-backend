@@ -57,13 +57,11 @@ router.get("/searchByLocation", async (req, res, next) => {
   res.json({ success, users, location });
 });
 
-router.post("/advancedSearch", async (req, res, next) => {
-});
 
 // Route Location in Onboarding
 router.post("/addLocation", async (req, res, next) => {
   var location
-  const response = await geocoder.geocode(req.query.location);
+  const response = await geocoder.geocode(req.body.location);
   location = {
     long: Number.parseFloat(response[0].longitude),
     lat: Number.parseFloat(response[0].latitude)
@@ -77,16 +75,20 @@ router.post("/addLocation", async (req, res, next) => {
   );
 });
 
-// Route Location in Search Bar
-router.get("/advancedSearch", async (req, res, next) => {
-  var locationRequest = req.query.location
-  if(!req.query.location) {
+// Route advancedSearch
+router.post("/search", async (req, res, next) => {
+  console.log(req.body)
+  var locationRequest = req.body.location
+  if(!req.body.location) {
     locationRequest = 'bourges, 18000';
   };
-  var radius = req.query.radius
-  if(!req.query.radius) {
+  var radius = req.body.radius
+  if(!req.body.radius) {
     radius = 1000;
   };
+  if (req.body.radius===300){
+    radius = 400;
+  }
 
   var location
   const response = await geocoder.geocode(locationRequest);
@@ -100,19 +102,19 @@ router.get("/advancedSearch", async (req, res, next) => {
   //radius en km 
   let coordinate = calculRadius(location.long, location.lat, location.radius);
   // default batch treatment
-  var nbBatch = req.query.nbBatch
-  if (!req.query.nbBatch){
+  var nbBatch = req.body.nbBatch
+  if (!req.body.nbBatch){
     nbBatch = {$gte: 1
     }
   }
   // default cursus treatment
-  var cursus = req.query.cursus
-  if (!req.query.cursus){
+  var cursus = req.body.cursus
+  if (req.body.cursus.length<1){
     cursus = ['Fullstack', 'DevOps', 'Code for business']
   }
   // default campus treatment
-  var campus = req.query.campus
-  if (!req.query.campus){
+  var campus = req.body.campus
+  if (req.body.campus.length<1){
     campus = ['Paris', 
     'Lyon', 
     'Marseille', 
@@ -123,8 +125,8 @@ router.get("/advancedSearch", async (req, res, next) => {
     'Monaco']
   }
   // default work treatment
-  var work = req.query.work
-  if (!req.query.work){
+  var work = req.body.work
+  if (req.body.work.length<1){
     work = ['Développeur',
        'Product Owner',
       'Data Scientist',
@@ -132,8 +134,8 @@ router.get("/advancedSearch", async (req, res, next) => {
       'Scrum Master']
   }
   // default typeWork treatment
-  var typeWork = req.query.typeWork
-  if (!req.query.typeWork){
+  var typeWork = req.body.workType
+  if (req.body.workType.length<1){
     typeWork = [
       'Entrepreneur',
       'En contrat',
@@ -142,18 +144,36 @@ router.get("/advancedSearch", async (req, res, next) => {
     ]
   }
   // default tags treatment
-  var tags = req.query.tags
+  var tags = req.body.tags
   console.log(tags)
-  if (!req.query.tags){
-    tags = 'Frontend, Backend, FullStack, JavaScript, AngularJS, ReactJS, VueJS, TypeScript, ReactNative, Swift , Kotlin, Flutter, BDD, API, Java, Python, PHP'
+  if (req.body.tags.length<1){
+    tags = 
+    ['Frontend', 
+    'Backend', 
+    'FullStack', 
+    'JavaScript', 
+    'AngularJS',
+    'ReactJS', 
+    'VueJS', 
+    'TypeScript', 
+    'ReactNative', 
+    'Swift', 
+    'Kotlin', 
+    'Flutter', 
+    'BDD', 
+    'API', 
+    'Java', 
+    'Python', 
+    'PHP'
+  ]
   }
   // default status treatment
-  var status = req.query.status
-  if (!req.query.status){
+  var status = req.body.status
+  if (req.body.status.length<1){
     status = ['#OPEN TO WORK', '#HIRING', '#PARTNER', '#JUST CURIOUS']
   }
 
-
+  
   var users = await UserModel.find({
     "address.long": {
       $gte: coordinate.longMinDegree,
@@ -168,9 +188,10 @@ router.get("/advancedSearch", async (req, res, next) => {
     "capsule.campus": campus,
     "work.work": work,
     "work.typeWork": typeWork,
-    tags: {$in: tags.split(', ')},
+    tags: {$in: tags},
     status: status,
   });
+  console.log(users)
   var success = false;
   users.length > 0 ? (success = true) : (success = false);
   res.json({ success, users, location });
