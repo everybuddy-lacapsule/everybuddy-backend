@@ -50,4 +50,10 @@ router.get("/:discussionID/lastMessage", async function (req, res, next) {
   }
 });
 
+router.post("/addMessage", async function (req,res, next){
+
+let discID = req.body.discussionID;
+ console.log('backid',req.body.discussionID)
+})
+
 module.exports = router;
