@@ -1,13 +1,7 @@
 var mongoose = require("mongoose");
 
-var contentSchema = mongoose.Schema({
-    name: String,
-    content: String,
-    dateSend: Date
-});
-
 var discussionSchema = mongoose.Schema({
-  content: contentSchema,
+    memberIDs: Array,
 });
 
 var DiscussionModel = mongoose.model("discussions", discussionSchema);

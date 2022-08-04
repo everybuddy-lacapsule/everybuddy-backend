@@ -1,6 +1,12 @@
 var mongoose = require("mongoose");
 
 /* ------------Sub-documents schema---------- */
+var capsuleSchema = mongoose.Schema({
+  nbBatch: Number,
+  campus: String,
+  cursus: String,
+});
+
 var workSchema = mongoose.Schema({
   work: String,
   company: String,
@@ -20,9 +26,6 @@ var addressSchema = mongoose.Schema({
   country: String
 });
 
-var tagSchema = mongoose.Schema({
-  name: String,
-});
 
 var addressSchema = mongoose.Schema({
     long: Number,
@@ -44,15 +47,12 @@ var userSchema = mongoose.Schema({
   presentation: String,
   searchCurrent: String,
   tel: Number,
-  nbBatch: Number,
-  campus: String,
-  cursus: String,
+  capsule: capsuleSchema,
   address: addressSchema,
   work: workSchema,
   linkRs: [linkSchema],
-  tags: [tagSchema],
+  tags: Array,
   buddies: [{ type: mongoose.Schema.Types.ObjectId, ref: "buddies" }],
-  discussion: [{ type: mongoose.Schema.Types.ObjectId, ref: "discussions" }],
 });
 
 var UserModel = mongoose.model("users", userSchema);
