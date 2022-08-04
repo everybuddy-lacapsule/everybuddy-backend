@@ -11,7 +11,6 @@ const options = {
   provider: 'google',
 
   // Optional depending on the providers
-  // apiKey: 'pk.eyJ1IjoiZXZlcnlidWRkeSIsImEiOiJjbDZkbnc2OGUwMG5uM2RyeTFxZWNjOWRjIn0._XThOJWHkfRMUiTJSFo9tg', // for Mapquest, OpenCage, Google Premier
   apiKey: API_MAP_TOKEN,
   formatter: null // 'gpx', 'string', ...
 };
@@ -148,6 +147,12 @@ router.get("/advancedSearch", async (req, res, next) => {
   if (!req.query.tags){
     tags = 'Frontend, Backend, FullStack, JavaScript, AngularJS, ReactJS, VueJS, TypeScript, ReactNative, Swift , Kotlin, Flutter, BDD, API, Java, Python, PHP'
   }
+  // default status treatment
+  var status = req.query.status
+  if (!req.query.status){
+    status = ['#OPEN TO WORK', '#HIRING', '#PARTNER', '#JUST CURIOUS']
+  }
+
 
   var users = await UserModel.find({
     "address.long": {
@@ -164,6 +169,7 @@ router.get("/advancedSearch", async (req, res, next) => {
     "work.work": work,
     "work.typeWork": typeWork,
     tags: {$in: tags.split(', ')},
+    status: status,
   });
   var success = false;
   users.length > 0 ? (success = true) : (success = false);
