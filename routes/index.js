@@ -56,9 +56,6 @@ router.get("/searchByLocation", async (req, res, next) => {
   res.json({ success, users, location });
 });
 
-router.post("/advancedSearch", async (req, res, next) => {
-});
-
 // Route Location in Onboarding
 router.post("/addLocation", async (req, res, next) => {
   var location
@@ -77,7 +74,7 @@ router.post("/addLocation", async (req, res, next) => {
 });
 
 // Route Location in Search Bar
-router.get("/advancedSearch", async (req, res, next) => {
+router.post("/search", async (req, res, next) => {
   var locationRequest = req.query.location
   if(!req.query.location) {
     locationRequest = 'bourges, 18000';
@@ -105,51 +102,50 @@ router.get("/advancedSearch", async (req, res, next) => {
     }
   }
   // default cursus treatment
-  var cursus = req.query.cursus
-  if (!req.query.cursus){
-    cursus = ['Fullstack', 'DevOps', 'Code for business']
+  var cursus = ['Fullstack', 'DevOps', 'Code for business']
+  if (req.query.cursus){
+    var cursus = req.query.cursus
   }
   // default campus treatment
-  var campus = req.query.campus
-  if (!req.query.campus){
-    campus = ['Paris', 
-    'Lyon', 
-    'Marseille', 
-    'Nice', 
-    'Lille', 
-    'Bordeaux',
-    'Bruxelles',
-    'Monaco']
+  campus = ['Paris', 
+  'Lyon', 
+  'Marseille', 
+  'Nice', 
+  'Lille', 
+  'Bordeaux',
+  'Bruxelles',
+  'Monaco']
+  if (req.query.campus){
+    var campus = req.query.campus
   }
   // default work treatment
-  var work = req.query.work
-  if (!req.query.work){
-    work = ['Développeur',
-       'Product Owner',
-      'Data Scientist',
-      'DevOps',
-      'Scrum Master']
+  work = ['Développeur',
+  'Product Owner',
+ 'Data Scientist',
+ 'DevOps',
+ 'Scrum Master']
+  if (req.query.work){
+    var work = req.query.work
   }
   // default typeWork treatment
-  var typeWork = req.query.typeWork
-  if (!req.query.typeWork){
-    typeWork = [
-      'Entrepreneur',
-      'En contrat',
-      'Freelance',
-      'En recherche',
-    ]
+  typeWork = [
+    'Entrepreneur',
+    'En contrat',
+    'Freelance',
+    'En recherche',
+  ]
+  if (req.query.typeWork){
+    var typeWork = req.query.typeWork
   }
   // default tags treatment
-  var tags = req.query.tags
-  console.log(tags)
-  if (!req.query.tags){
-    tags = 'Frontend, Backend, FullStack, JavaScript, AngularJS, ReactJS, VueJS, TypeScript, ReactNative, Swift , Kotlin, Flutter, BDD, API, Java, Python, PHP'
+  tags = 'Frontend, Backend, FullStack, JavaScript, AngularJS, ReactJS, VueJS, TypeScript, ReactNative, Swift , Kotlin, Flutter, BDD, API, Java, Python, PHP'
+  if (req.query.tags){
+    var tags = req.query.tags
   }
   // default status treatment
-  var status = req.query.status
-  if (!req.query.status){
-    status = ['#OPEN TO WORK', '#HIRING', '#PARTNER', '#JUST CURIOUS']
+  status = ['#OPEN TO WORK', '#HIRING', '#PARTNER', '#JUST CURIOUS']
+  if (req.query.status){
+    var status = req.query.status
   }
 
 
@@ -172,7 +168,7 @@ router.get("/advancedSearch", async (req, res, next) => {
   });
   var success = false;
   users.length > 0 ? (success = true) : (success = false);
-  res.json({ success, users, location });
+  res.json({ success, users, location, cursus, campus, status, tags, work, typeWork });
 });
 
 module.exports = router;
