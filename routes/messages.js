@@ -1,17 +1,53 @@
 var express = require("express");
 var router = express.Router();
 var UserModel = require("../models/users");
+const MessageModel = require("../models/messages");
 
-/*---POST: find and send list discussions of user by userID---- */
-router.post("/displayDiscussions", async function (req, res, next) {
-  let user = await UserModel.findOne({
-    _id: req.body.userID,
+/*---POST: create a message for users---*/
+router.post("/", async function (req, res, next) {
+  const newMessage = new MessageModel({
+    discussionID: req.body.discussionID,
+    senderID: req.body.senderID,
+    content: req.body.content,
+    dateSend: Date.now(),
   });
-  let discussions = user.discussion;
-  console.log(user.discussion);
 
+  try {
+    const savedMessage = await newMessage.save();
+    res.status(200).json(savedMessage);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
 
-  res.json(discussions);
+/*---GET: find and send list messages of user by discussionID---- */
+router.get("/:discussionID", async function (req, res, next) {
+  let discussionID = req.params.discussionID;
+  if (discussionID) {
+    try {
+      let messages = await MessageModel.find({ discussionID: discussionID });
+
+      res.status(200).json(messages);
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  }
+});
+
+/*---GET: find and send  last message by discussionID---- */
+router.get("/:discussionID/lastMessage", async function (req, res, next) {
+  let discussionID = req.params.discussionID;
+  if (discussionID) {
+    try {
+      let messages = await MessageModel.find({ discussionID: discussionID }).sort({ dateSend: -1 });
+
+      //let lastMessage = messages;
+
+      res.status(200).json(messages[0]);
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  }
 });
 
 module.exports = router;

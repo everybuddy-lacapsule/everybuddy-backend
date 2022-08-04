@@ -15,11 +15,11 @@ router.get("/getUserDatas", async (req, res, next) => {
 
 // ROUTE QUI VERIFIE SI EMAIL EXISTE EN BDD relié à CheckEmailScreen
 router.post("/check-email", async function (req, res, next) {
-  var errorMessage = '';
-  var userEmail = '';
+  var errorMessage = "";
+  var userEmail = "";
   var emailExists = false;
   var user = await UserModel.findOne({
-    email: req.body.email,
+    email: req.body.email.toLowerCase(),
   });
 
   if (!req.body.email || !user) {
@@ -30,16 +30,16 @@ router.post("/check-email", async function (req, res, next) {
     userEmail = user.email;
   }
 
-  res.json({ emailExists, errorMessage, userEmail});
+  res.json({ emailExists, errorMessage, userEmail });
 });
 
 // ROUTE qui vérifie si email et pwd existent en BDD relié à LoginScreen
 router.post("/sign-in", async function (req, res, next) {
-  var errorMessage = '';
+  var errorMessage = "";
   var isLogin = false;
-  var userID = '';
+  var userDatas;
   var user = await UserModel.findOne({
-    email: req.body.email,
+    email: req.body.email.toLowerCase(),
   });
 
   if (!req.body.email || !req.body.pwd) {
@@ -51,16 +51,14 @@ router.post("/sign-in", async function (req, res, next) {
       errorMessage = "Votre password est incorrect";
     } else {
       isLogin = true;
-      userID = user._id
+      userDatas = user;
     }
   } else {
     isLogin = false;
     errorMessage = "Adresse email invalide";
   }
 
-  res.json({ isLogin, errorMessage, userID });
+  res.json({ isLogin, errorMessage, userDatas });
 });
-
-
 
 module.exports = router;
