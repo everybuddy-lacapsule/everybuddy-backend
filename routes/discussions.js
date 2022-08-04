@@ -5,6 +5,7 @@ const DiscussionModel = require("../models/discussions");
 
 /*---POST: create a discussion for users---*/
 router.post('/', async function(req, res, next){
+
     const newDiscussion = new DiscussionModel({
       memberIDs: [req.body.senderID, req.body.receiverID]
     });

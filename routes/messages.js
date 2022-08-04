@@ -39,7 +39,9 @@ router.get("/:discussionID/lastMessage", async function (req, res, next) {
   let discussionID = req.params.discussionID;
   if (discussionID) {
     try {
-      let messages = await MessageModel.find({ discussionID: discussionID }).sort({ dateSend: -1 });
+      let messages = await MessageModel.find({
+        discussionID: discussionID,
+      }).sort({ dateSend: -1 });
 
       //let lastMessage = messages;
 
@@ -49,5 +51,26 @@ router.get("/:discussionID/lastMessage", async function (req, res, next) {
     }
   }
 });
+
+/*---POST: save message in DB by discussionID, userID---- */
+router.post("/addMessage", async function (req, res, next) {
+  if (req.body.discussionID) {
+    try {
+      const newMessageAdded = new MessageModel({
+        discussionID: req.body.discussionID,
+        senderID: req.body.userID,
+        content: req.body.message,
+        dateSend: Date.now(),
+      });
+
+      //let lastMessage = messages;
+      const savedMessage = await newMessageAdded.save();
+      res.status(200).json("ok");
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  }
+});
+
 
 module.exports = router;
