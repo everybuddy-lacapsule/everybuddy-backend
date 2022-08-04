@@ -6,7 +6,16 @@ var BuddyModel = require("../models/buddies");
 const axios = require("axios");
 require("dotenv").config();
 const { API_MAP_TOKEN } = process.env;
+const NodeGeocoder = require('node-geocoder');
+const options = {
+  provider: 'google',
 
+  // Optional depending on the providers
+  apiKey: API_MAP_TOKEN,
+  formatter: null // 'gpx', 'string', ...
+};
+
+const geocoder = NodeGeocoder(options);
 var JobModel = require("../models/jobs");
 var TagModel = require("../models/tags");
 
@@ -22,24 +31,12 @@ const calculRadius = (longDegree, latDegree, radius) => {
 
 // Route Location in Search Bar
 router.get("/searchByLocation", async (req, res, next) => {
-  const params = {
-    auth: API_MAP_TOKEN,
-    locate: req.query.location,
-    json: "1",
+  var location
+  const response = await geocoder.geocode(req.query.location);
+  location = {
+    long: Number.parseFloat(response[0].longitude),
+    lat: Number.parseFloat(response[0].latitude)
   };
-  var location;
-  await axios
-    .get("https://geocode.xyz?region=FR", { params })
-    .then((response) => {
-      location = {
-        long: Number.parseFloat(response.data.longt),
-        lat: Number.parseFloat(response.data.latt),
-      };
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-    console.log(location)
   //radius en km 
   let radius = 5;
   let coordinate = calculRadius(location.long, location.lat, radius);
@@ -64,26 +61,13 @@ router.post("/advancedSearch", async (req, res, next) => {
 
 // Route Location in Onboarding
 router.post("/addLocation", async (req, res, next) => {
-  const params = {
-    auth: API_MAP_TOKEN,
-    locate: req.body.location,
-    json: "1",
+  var location
+  const response = await geocoder.geocode(req.query.location);
+  location = {
+    long: Number.parseFloat(response[0].longitude),
+    lat: Number.parseFloat(response[0].latitude)
   };
-  var location;
-  await axios
-    .get("https://geocode.xyz?region=FR", { params })
-    .then((response) => {
-      location = {
-        long: response.data.longt,
-        lat: response.data.latt,
-        city: response.data.standard.city,
-        country: response.data.standard.prov,
-      };
-      res.json(location);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+
   await UserModel.updateOne(
     { _id: req.body.id },
     {
@@ -94,35 +78,26 @@ router.post("/addLocation", async (req, res, next) => {
 
 // Route Location in Search Bar
 router.get("/advancedSearch", async (req, res, next) => {
-  var locationRequest = 'lyon'
-  if(req.query.location) {
-    locationRequest = req.query.location;
+  var locationRequest = req.query.location
+  if(!req.query.location) {
+    locationRequest = 'bourges, 18000';
   };
-  var radius = 1000
-  if(req.query.radius) {
-    radius = req.query.radius;
+  var radius = req.query.radius
+  if(!req.query.radius) {
+    radius = 1000;
   };
 
-  const params = {
-    auth: API_MAP_TOKEN,
-    locate: locationRequest,
-    json: "1",
+  var location
+  const response = await geocoder.geocode(locationRequest);
+  location = {
+    long: Number.parseFloat(response[0].longitude),
+    lat: Number.parseFloat(response[0].latitude),
+    radius: radius
   };
-  var location;
-  await axios
-    .get("https://geocode.xyz?region=FR", { params })
-    .then((response) => {
-      location = {
-        long: Number.parseFloat(response.data.longt),
-        lat: Number.parseFloat(response.data.latt),
-      };
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  console.log(location)
 
   //radius en km 
-  let coordinate = calculRadius(location.long, location.lat, radius);
+  let coordinate = calculRadius(location.long, location.lat, location.radius);
   // default batch treatment
   var nbBatch = req.query.nbBatch
   if (!req.query.nbBatch){
@@ -133,7 +108,6 @@ router.get("/advancedSearch", async (req, res, next) => {
   var cursus = req.query.cursus
   if (!req.query.cursus){
     cursus = ['Fullstack', 'DevOps', 'Code for business']
-    
   }
   // default campus treatment
   var campus = req.query.campus
@@ -146,8 +120,38 @@ router.get("/advancedSearch", async (req, res, next) => {
     'Bordeaux',
     'Bruxelles',
     'Monaco']
-    
   }
+  // default work treatment
+  var work = req.query.work
+  if (!req.query.work){
+    work = ['Développeur',
+       'Product Owner',
+      'Data Scientist',
+      'DevOps',
+      'Scrum Master']
+  }
+  // default typeWork treatment
+  var typeWork = req.query.typeWork
+  if (!req.query.typeWork){
+    typeWork = [
+      'Entrepreneur',
+      'En contrat',
+      'Freelance',
+      'En recherche',
+    ]
+  }
+  // default tags treatment
+  var tags = req.query.tags
+  console.log(tags)
+  if (!req.query.tags){
+    tags = 'Frontend, Backend, FullStack, JavaScript, AngularJS, ReactJS, VueJS, TypeScript, ReactNative, Swift , Kotlin, Flutter, BDD, API, Java, Python, PHP'
+  }
+  // default status treatment
+  var status = req.query.status
+  if (!req.query.status){
+    status = ['#OPEN TO WORK', '#HIRING', '#PARTNER', '#JUST CURIOUS']
+  }
+
 
   var users = await UserModel.find({
     "address.long": {
@@ -161,6 +165,10 @@ router.get("/advancedSearch", async (req, res, next) => {
     "capsule.nbBatch": nbBatch,
     "capsule.cursus": cursus,
     "capsule.campus": campus,
+    "work.work": work,
+    "work.typeWork": typeWork,
+    tags: {$in: tags.split(', ')},
+    status: status,
   });
   var success = false;
   users.length > 0 ? (success = true) : (success = false);
