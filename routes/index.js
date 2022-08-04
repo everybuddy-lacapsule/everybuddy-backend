@@ -39,7 +39,7 @@ router.get("/searchByLocation", async (req, res, next) => {
     .catch((error) => {
       console.log(error);
     });
-
+    console.log(location)
   //radius en km 
   let radius = 5;
   let coordinate = calculRadius(location.long, location.lat, radius);
