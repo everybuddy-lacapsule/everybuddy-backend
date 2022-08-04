@@ -12,7 +12,7 @@ const options = {
 
   // Optional depending on the providers
   // apiKey: 'pk.eyJ1IjoiZXZlcnlidWRkeSIsImEiOiJjbDZkbnc2OGUwMG5uM2RyeTFxZWNjOWRjIn0._XThOJWHkfRMUiTJSFo9tg', // for Mapquest, OpenCage, Google Premier
-  apiKey:'AIzaSyCmYCOijfX6n3fsTcuJsT5J2Uz_Lb7p4VY',
+  apiKey: API_MAP_TOKEN,
   formatter: null // 'gpx', 'string', ...
 };
 
@@ -86,19 +86,20 @@ router.get("/advancedSearch", async (req, res, next) => {
   };
   var radius = req.query.radius
   if(!req.query.radius) {
-    radius = 10000;
+    radius = 1000;
   };
 
   var location
   const response = await geocoder.geocode(locationRequest);
   location = {
     long: Number.parseFloat(response[0].longitude),
-    lat: Number.parseFloat(response[0].latitude)
+    lat: Number.parseFloat(response[0].latitude),
+    radius: radius
   };
   console.log(location)
 
   //radius en km 
-  let coordinate = calculRadius(location.long, location.lat, radius);
+  let coordinate = calculRadius(location.long, location.lat, location.radius);
   // default batch treatment
   var nbBatch = req.query.nbBatch
   if (!req.query.nbBatch){
@@ -128,7 +129,7 @@ router.get("/advancedSearch", async (req, res, next) => {
     work = ['Développeur',
        'Product Owner',
       'Data Scientist',
-      'Dev Ops',
+      'DevOps',
       'Scrum Master']
   }
   // default typeWork treatment
