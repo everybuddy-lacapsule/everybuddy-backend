@@ -75,7 +75,6 @@ router.post("/addLocation", async (req, res, next) => {
 
 // Route advancedSearch
 router.post("/search", async (req, res, next) => {
-  console.log(req.body)
   var locationRequest = req.body.location
   if(!req.body.location) {
     locationRequest = 'bourges, 18000';
