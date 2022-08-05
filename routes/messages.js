@@ -3,22 +3,6 @@ var router = express.Router();
 var UserModel = require("../models/users");
 const MessageModel = require("../models/messages");
 
-/*---POST: create a message for users---*/
-router.post("/", async function (req, res, next) {
-  const newMessage = new MessageModel({
-    discussionID: req.body.discussionID,
-    senderID: req.body.senderID,
-    content: req.body.content,
-    dateSend: Date.now(),
-  });
-
-  try {
-    const savedMessage = await newMessage.save();
-    res.status(200).json(savedMessage);
-  } catch (error) {
-    res.status(500).json(error);
-  }
-});
 
 /*---GET: find and send list messages of user by discussionID---- */
 router.get("/:discussionID", async function (req, res, next) {
@@ -67,7 +51,8 @@ router.post("/addMessage", async function (req, res, next) {
 
       //let lastMessage = messages;
       const savedMessage = await newMessageAdded.save();
-      res.status(200).json("ok");
+      console.log(savedMessage);
+      res.status(200).json(savedMessage);
     } catch (error) {
       res.status(500).json(error);
     }
