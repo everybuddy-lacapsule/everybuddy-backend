@@ -26,9 +26,6 @@ router.get("/:discussionID/lastMessage", async function (req, res, next) {
       let messages = await MessageModel.find({
         discussionID: discussionID,
       }).sort({ dateSend: -1 });
-
-      //let lastMessage = messages;
-
       res.status(200).json(messages[0]);
     } catch (error) {
       res.status(500).json(error);
