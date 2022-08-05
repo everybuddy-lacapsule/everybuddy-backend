@@ -29,36 +29,6 @@ const calculRadius = (longDegree, latDegree, radius) => {
   return { longMaxDegree, longMinDegree, latMaxDegree, latMinDegree };
 };
 
-<<<<<<< HEAD
-// Route Location in Search Bar
-router.get("/searchByLocation", async (req, res, next) => {
-  var location
-  const response = await geocoder.geocode(req.query.location);
-  location = {
-    long: Number.parseFloat(response[0].longitude),
-    lat: Number.parseFloat(response[0].latitude)
-  };
-  //radius en km 
-  let radius = 5;
-  let coordinate = calculRadius(location.long, location.lat, radius);
-
-  var users = await UserModel.find({
-    "address.long": {
-      $gte: coordinate.longMinDegree,
-      $lte: coordinate.longMaxDegree,
-    },
-    "address.lat": {
-      $gte: coordinate.latMinDegree,
-      $lte: coordinate.latMaxDegree,
-    },
-  });
-  var success = false;
-  users.length > 0 ? (success = true) : (success = false);
-  res.json({ success, users, location });
-});
-=======
-
->>>>>>> 2dda0aabec711e83c848671ecccc0671fa0e7d8c
 
 // Route Location in Onboarding
 router.post("/addLocation", async (req, res, next) => {
@@ -79,17 +49,10 @@ router.post("/addLocation", async (req, res, next) => {
 
 // Route search
 router.post("/search", async (req, res, next) => {
-<<<<<<< HEAD
-  var locationRequest = req.body.location
-  if(!req.body.location) {
-    locationRequest = 'bourges, 18000';
-  };
-=======
   // INIT variable de response (location)
   var location
 
   // default radius treatment
->>>>>>> 2dda0aabec711e83c848671ecccc0671fa0e7d8c
   var radius = req.body.radius
   if(!req.body.radius) {
     radius = 400;
