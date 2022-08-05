@@ -27,13 +27,6 @@ var addressSchema = mongoose.Schema({
 });
 
 
-var addressSchema = mongoose.Schema({
-    long: Number,
-    lat: Number,
-    city: String,
-    country: String
-});
-
 /* ------------Collection principal---------- */
 var userSchema = mongoose.Schema({
   admin: Boolean,
