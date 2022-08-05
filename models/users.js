@@ -50,7 +50,7 @@ var userSchema = mongoose.Schema({
   capsule: capsuleSchema,
   address: addressSchema,
   work: workSchema,
-  linkRs: [linkSchema],
+  linkRs: linkSchema,
   tags: Array,
   buddies: [{ type: mongoose.Schema.Types.ObjectId, ref: "buddies" }],
   discussion: [{ type: mongoose.Schema.Types.ObjectId, ref: "discussions" }],
