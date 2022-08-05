@@ -179,7 +179,6 @@ router.post("/search", async (req, res, next) => {
     tags: {$in: tags},
     status: status,
   });
-  console.log(users)
   var success = false;
   users.length > 0 ? (success = true) : (success = false);
   res.json({ success, users, location, cursus, campus, status, tags, work, typeWork });

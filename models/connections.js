@@ -12,7 +12,11 @@ const options = {
 mongoose.connect(
   `mongodb+srv://${DB_LOGIN}:${DB_PWD}@${DB_HOSTNAME}/${DB_NAME}?retryWrites=true&w=majority`,
   options,
-  function (err) {
+  function (err) { if (err){
     console.log(err);
-  }
+    } else {
+        console.log('(***$$$ CONNECTED - GET ROLLING BABY $$$***)')
+    }
+    }
+
 );

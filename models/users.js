@@ -26,7 +26,6 @@ var addressSchema = mongoose.Schema({
   country: String
 });
 
-
 /* ------------Collection principal---------- */
 var userSchema = mongoose.Schema({
   admin: Boolean,
@@ -46,7 +45,6 @@ var userSchema = mongoose.Schema({
   linkRs: linkSchema,
   tags: Array,
   buddies: [{ type: mongoose.Schema.Types.ObjectId, ref: "buddies" }],
-  discussion: [{ type: mongoose.Schema.Types.ObjectId, ref: "discussions" }],
 });
 
 var UserModel = mongoose.model("users", userSchema);
