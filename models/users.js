@@ -27,13 +27,6 @@ var addressSchema = mongoose.Schema({
 });
 
 
-var addressSchema = mongoose.Schema({
-    long: Number,
-    lat: Number,
-    city: String,
-    country: String
-});
-
 /* ------------Collection principal---------- */
 var userSchema = mongoose.Schema({
   admin: Boolean,
@@ -50,7 +43,7 @@ var userSchema = mongoose.Schema({
   capsule: capsuleSchema,
   address: addressSchema,
   work: workSchema,
-  linkRs: [linkSchema],
+  linkRs: linkSchema,
   tags: Array,
   buddies: [{ type: mongoose.Schema.Types.ObjectId, ref: "buddies" }],
   discussion: [{ type: mongoose.Schema.Types.ObjectId, ref: "discussions" }],

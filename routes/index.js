@@ -22,40 +22,14 @@ var TagModel = require("../models/tags");
 const calculRadius = (longDegree, latDegree, radius) => {
   let diffLongFr = Number(radius) * 0.054;
   let diffLatFr = Number(radius) * 0.009;
-  let longMaxDegree = Number(longDegree) + diffLongFr;
-  let longMinDegree = Number(longDegree) - diffLongFr;
-  let latMaxDegree = Number(latDegree) + diffLatFr;
-  let latMinDegree = Number(latDegree) - diffLatFr;
+  let longMaxDegree = longDegree + diffLongFr;
+  let longMinDegree = longDegree - diffLongFr;
+  let latMaxDegree = latDegree + diffLatFr;
+  let latMinDegree = latDegree - diffLatFr;
   return { longMaxDegree, longMinDegree, latMaxDegree, latMinDegree };
 };
 
-// Route Location in Search Bar
-router.get("/searchByLocation", async (req, res, next) => {
-  var location
-  const response = await geocoder.geocode(req.query.location);
-  location = {
-    long: Number.parseFloat(response[0].longitude),
-    lat: Number.parseFloat(response[0].latitude)
-  };
 
-  //radius en km 
-  let radius = 5;
-  let coordinate = calculRadius(location.long, location.lat, radius);
-
-  var users = await UserModel.find({
-    "address.long": {
-      $gte: coordinate.longMinDegree,
-      $lte: coordinate.longMaxDegree,
-    },
-    "address.lat": {
-      $gte: coordinate.latMinDegree,
-      $lte: coordinate.latMaxDegree,
-    },
-  });
-  var success = false;
-  users.length > 0 ? (success = true) : (success = false);
-  res.json({ success, users, location });
-});
 
 
 // Route Location in Onboarding
@@ -75,38 +49,35 @@ router.post("/addLocation", async (req, res, next) => {
   );
 });
 
-// Route advancedSearch
+// Route search
 router.post("/search", async (req, res, next) => {
-  console.log(req.body)
-  var locationRequest = req.body.location
-  if(!req.body.location) {
-    locationRequest = 'bourges, 18000';
-  };
+  // INIT variable de response (location)
+  var location
+
+  // default radius treatment
   var radius = req.body.radius
   if(!req.body.radius) {
-    radius = 1000;
-  };
-  if (req.body.radius===300){
     radius = 400;
-  }
-
-  var location
-  const response = await geocoder.geocode(locationRequest);
-  location = {
-    long: Number.parseFloat(response[0].longitude),
-    lat: Number.parseFloat(response[0].latitude),
-    radius: radius
   };
-  console.log(location)
-
-  //radius en km 
-  let coordinate = calculRadius(location.long, location.lat, location.radius);
-  // default batch treatment
-  var nbBatch = req.body.nbBatch
-  if (!req.body.nbBatch){
-    nbBatch = {$gte: 1
-    }
+  if (req.body.radius===100){
+    radius = 400;
+    location = {
+      long: 2.4302,
+      lat: 46.536,
+      radius: radius,
+      locationRequest : 'Toute la France',
+    };
   }
+  // default location request treatment
+  var locationRequest = req.body.location
+  if(!req.body.location) {
+    location = {
+      long: 2.4302,
+      lat: 46.536,
+      radius: radius,
+      locationRequest : 'Toute la France',
+    };
+  };
   // default cursus treatment
   var cursus = req.body.cursus
   if (req.body.cursus.length<1){
@@ -172,6 +143,25 @@ router.post("/search", async (req, res, next) => {
   if (req.body.status.length<1){
     status = ['#OPEN TO WORK', '#HIRING', '#PARTNER', '#JUST CURIOUS']
   }
+  // default batch treatment
+  var nbBatch = req.body.nbBatch
+  if (!req.body.nbBatch){
+    nbBatch = {$gte: 1
+    }
+  }
+  // appel de geocode api (google)
+  if (!location){
+    const response = await geocoder.geocode(locationRequest);
+    location = {
+      long: Number.parseFloat(response[0].longitude),
+      lat: Number.parseFloat(response[0].latitude),
+      radius: radius,
+      locationRequest : locationRequest,
+    };
+  }
+  
+  //radius en km 
+  let coordinate = calculRadius(location.long, location.lat, location.radius);
 
   
   var users = await UserModel.find({
@@ -196,5 +186,33 @@ router.post("/search", async (req, res, next) => {
   users.length > 0 ? (success = true) : (success = false);
   res.json({ success, users, location });
 });
+
+// Route Location in Search Bar - POUR LE DOSSIER : 1ere route searchByLocation avant implementation search avancee
+// router.get("/searchByLocation", async (req, res, next) => {
+//   var location
+//   const response = await geocoder.geocode(req.query.location);
+//   location = {
+//     long: Number.parseFloat(response[0].longitude),
+//     lat: Number.parseFloat(response[0].latitude)
+//   };
+
+//   //radius en km 
+//   let radius = 5;
+//   let coordinate = calculRadius(location.long, location.lat, radius);
+
+//   var users = await UserModel.find({
+//     "address.long": {
+//       $gte: coordinate.longMinDegree,
+//       $lte: coordinate.longMaxDegree,
+//     },
+//     "address.lat": {
+//       $gte: coordinate.latMinDegree,
+//       $lte: coordinate.latMaxDegree,
+//     },
+//   });
+//   var success = false;
+//   users.length > 0 ? (success = true) : (success = false);
+//   res.json({ success, users, location });
+// });
 
 module.exports = router;
