@@ -11,7 +11,6 @@ router.get("/getUserDatas", async (req, res, next) => {
   if (user) {
     userDatas = user;
   }
-  console.log(userDatas);
   res.json({ userDatas });
 });
 
