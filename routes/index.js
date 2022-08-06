@@ -119,7 +119,7 @@ router.post("/search", async (req, res, next) => {
     tags = 
     ['Frontend', 
     'Backend', 
-    'FullStack', 
+    'Fullstack', 
     'JavaScript', 
     'AngularJS',
     'ReactJS', 
