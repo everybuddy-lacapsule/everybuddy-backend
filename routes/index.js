@@ -63,7 +63,7 @@ router.post("/search", async (req, res, next) => {
       long: 2.4302,
       lat: 46.536,
       radius: radius,
-      locationRequest : 'Toute la France',
+      locationRequest : '',
     };
   }
   // default location request treatment
@@ -73,7 +73,7 @@ router.post("/search", async (req, res, next) => {
       long: 2.4302,
       lat: 46.536,
       radius: radius,
-      locationRequest : 'Toute la France',
+      locationRequest : '',
     };
   };
   // default cursus treatment
@@ -119,7 +119,7 @@ router.post("/search", async (req, res, next) => {
     tags = 
     ['Frontend', 
     'Backend', 
-    'FullStack', 
+    'Fullstack', 
     'JavaScript', 
     'AngularJS',
     'ReactJS', 
