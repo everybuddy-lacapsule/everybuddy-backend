@@ -2,6 +2,69 @@ var express = require("express");
 var router = express.Router();
 var UserModel = require("../models/users");
 
+
+const realUsers = [
+  {
+    admin: true,
+    onboarding: false,
+    firstName: "William",
+    name: "Werlé",
+    email: "williamwiut@gmail.com",
+    pwd: "wouairley",
+    avatar: "https://drive.google.com/open?id=1bpLl0LLCz33LLDSGt_P1NHtt0D3_ivJP",
+    status: "#JUST CURIOUS",
+    presentation: "",
+    searchCurrent: "",
+    tel: 604493876,
+    capsule: {
+      nbBatch: 55,
+      campus: "Lyon",
+      cursus: "",
+    },
+    address: {long:  4.84890, lat: 45.75466, city: "Paris", country: "FR" },
+    work: 
+    {
+      work: "DevOps",
+      company: "L'Empire",
+      dateDebut: "",
+      typeWork: "Freelance",
+    },
+    linkRs: [],
+    tags: ["ReactNative"],
+    buddies: [],
+  },
+  {
+    admin: true,
+    onboarding: false,
+    firstName: "Mathieu",
+    name: "Lepevneu",
+    email: "mathieu.lenepveu.perso@gmail.com",
+    pwd: "wouairley",
+    avatar: "https://drive.google.com/open?id=1bpLl0LLCz33LLDSGt_P1NHtt0D3_ivJP",
+    status: "#OPEN TO WORK",
+    presentation: "",
+    searchCurrent: "",
+    tel: "",
+    capsule: {
+      nbBatch: 55,
+      campus: "Lyon",
+      cursus: "",
+    },
+    address: {long:  4.84890, lat: 45.75466, city: "Paris", country: "FR" },
+    work: 
+    {
+      work: "DevOps",
+      company: "L'Empire",
+      dateDebut: "",
+      typeWork: "Freelance",
+    },
+    linkRs: [],
+    tags: ["ReactNative"],
+    buddies: [],
+  },
+]
+
+
 const users = [
     {
       admin: false,
