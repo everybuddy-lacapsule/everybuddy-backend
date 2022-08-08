@@ -3,7 +3,8 @@ var router = express.Router();
 var UserModel = require("../models/users");
 const StatusModel = require("../models/statuses");
 const TypeJobsModel = require("../models/typeJobs");
-/*
+const JobModel = require("../models/jobs");
+
 const realUsers = [
   {
     admin: true,
@@ -64,7 +65,7 @@ const realUsers = [
     buddies: [],
   },
 ];
-*/
+
 
 const users = [
   /*
@@ -219,7 +220,7 @@ const users = [
 
 */
 ];
-/*
+
 router.get("/", async function (req, res, next) {
   for (let i = 0; i < users.length; i++) {
     let newUser = new UserModel(users[i]);
@@ -227,11 +228,11 @@ router.get("/", async function (req, res, next) {
   }
   res.render("index", { title: "Create DB" });
 });
-*/
+
 
 /*----------------------ACTIVE ONCE TIME TO CREATE A COLLECTION : Create collection Status--------------------------*/
 
-router.get("/createStatuses", async function (req, res, next) {
+router.post("/createStatuses", async function (req, res, next) {
   const statuses = {
     statuses: ["# OPEN TO WORK", "# HIRING", "# PARTNER", "# JUST CURIOUS"],
   };
@@ -244,16 +245,30 @@ router.get("/createStatuses", async function (req, res, next) {
   });
 });
 
-/*----------------------ACTIVE ONCE TIME TO CREATE A COLLECTION : Create collection typeJobs / typeWorks --------------------------*/
-router.get("/createTypeJobs", async function (req, res, next) {
-  const typeJobs = {
-    typeJobs: [
+/*----------------------ACTIVE ONCE TIME TO CREATE A COLLECTION : Create collection jobs / works --------------------------*/
+router.post("/createJobs", async function (req, res, next) {
+  const jobs = {
+    jobs: [
       "Développeur",
       "Product Owner",
       "Data Scientist",
       "DevOps",
       "Scrum Master",
     ],
+  };
+  let newJobs = new JobModel(jobs);
+
+  let newJobsSaved = await newJobs.save();
+  res.json({
+    title: "Collection jobs created",
+    collection: newJobsSaved,
+  });
+});
+
+/*----------------------ACTIVE ONCE TIME TO CREATE A COLLECTION : Create collection typeJobs / typeWorks --------------------------*/
+router.post("/createTypeJobs", async function (req, res, next) {
+  const typeJobs = {
+    typeJobs: ["Entrepreneur", "En contrat", "Freelance", "En recherche"],
   };
   let newTypeJobs = new TypeJobsModel(typeJobs);
 

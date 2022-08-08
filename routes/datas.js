@@ -34,10 +34,7 @@ router.get("/statuses", async (req, res, next) => {
 router.get("/jobs", async (req, res, next) => {
   try {
     const jobs = await JobModel.find();
-    const allJobs = [];
-    jobs.forEach((job) => {
-      allJobs.push(job["name"]);
-    });
+    const allJobs = jobs[0].jobs;
     res.status(200).json(allJobs);
   } catch (error) {
     res.status(500).json(error);
