@@ -2,7 +2,71 @@ var express = require("express");
 var router = express.Router();
 var UserModel = require("../models/users");
 
+
+const realUsers = [
+  {
+    admin: true,
+    onboarding: false,
+    firstName: "William",
+    name: "Werlé",
+    email: "williamwiut@gmail.com",
+    pwd: "wouairley",
+    avatar: "https://drive.google.com/open?id=1bpLl0LLCz33LLDSGt_P1NHtt0D3_ivJP",
+    status: "#JUST CURIOUS",
+    presentation: "",
+    searchCurrent: "",
+    tel: 604493876,
+    capsule: {
+      nbBatch: 55,
+      campus: "Lyon",
+      cursus: "",
+    },
+    address: {long:  4.84890, lat: 45.75466, city: "Paris", country: "FR" },
+    work: 
+    {
+      work: "DevOps",
+      company: "L'Empire",
+      dateDebut: "",
+      typeWork: "Freelance",
+    },
+    linkRs: [],
+    tags: ["ReactNative"],
+    buddies: [],
+  },
+  {
+    admin: true,
+    onboarding: false,
+    firstName: "Mathieu",
+    name: "Lepevneu",
+    email: "mathieu.lenepveu.perso@gmail.com",
+    pwd: "wouairley",
+    avatar: "https://drive.google.com/open?id=1bpLl0LLCz33LLDSGt_P1NHtt0D3_ivJP",
+    status: "#OPEN TO WORK",
+    presentation: "",
+    searchCurrent: "",
+    tel: "",
+    capsule: {
+      nbBatch: 55,
+      campus: "Lyon",
+      cursus: "",
+    },
+    address: {long:  4.84890, lat: 45.75466, city: "Paris", country: "FR" },
+    work: 
+    {
+      work: "DevOps",
+      company: "L'Empire",
+      dateDebut: "",
+      typeWork: "Freelance",
+    },
+    linkRs: [],
+    tags: ["ReactNative"],
+    buddies: [],
+  },
+]
+
+
 const users = [
+  /*
     {
       admin: false,
       onboarding: false,
@@ -10,9 +74,9 @@ const users = [
       name: "Smith",
       email: "as@gmail.com",
       pwd: "123",
-      avatar: "https://png.pngtree.com/png-vector/20191027/ourlarge/pngtree-cute-cat-avatar-with-a-yellow-background-png-image_1873423.jpg",
+      avatar: "https://res.cloudinary.com/dcihy0wgo/image/upload/v1659865408/avatarF_egsplj.png",
       status: "#JUST CURIOUS",
-      presentation: "",
+      presentation: "Vous savez, moi je ne crois pas qu'il y ait de bonne ou de mauvaise situation. Moi, si je devais résumer ma vie aujourd'hui avec vous, je dirais que c'est d'abord des rencontres. Des gens qui m'ont tendu la main, peut-être à un moment où je ne pouvais pas, où j'étais seul chez moi. Et c'est assez curieux de se dire que les hasards, les rencontres, forgent une destinée... Parce que quand on a le goût de la chose, quand on a le goût de la chose bien faite, le beau geste, parfois on ne trouve pas l'interlocuteur en face je dirais, le miroir qui vous aide à avancer. Alors ça n'est pas mon cas, comme je disais là, puisque moi au contraire, j'ai pu : et je dis merci à la vie, je lui dis merci, je chante la vie, je danse la vie... je ne suis qu'amour ! Et finalement, quand beaucoup de gens aujourd'hui me disent « Mais comment fais-tu pour avoir cette humanité ? », et bien je leur réponds très simplement, je leur dis que c'est ce goût de l'amour ce goût donc qui m'a poussé aujourd'hui à entreprendre une construction mécanique, mais demain qui sait ? Peut-être simplement à me mettre au service de la communauté, à faire le don, le don de soi... \n",
       searchCurrent: "",
       tel: 623455589,
       capsule: {
@@ -28,7 +92,7 @@ const users = [
         dateDebut: "",
         typeWork: "Freelance",
       },
-      linkRs: [],
+      linkRs: {},
       tags: ["ReactNative"],
       buddies: [],
     },
@@ -57,7 +121,7 @@ const users = [
           dateDebut: "",
           typeWork: "En contrat",
         },
-      linkRs: [],
+      linkRs: {},
       tags: [ "Flutter","Backend"],
       buddies: [],
     },
@@ -76,7 +140,7 @@ const users = [
       capsule: {
         nbBatch: 55,
         campus: "Paris",
-        cursus: "Dev web",
+        cursus: "DevOps",
       },
       address: {long: 4.84890, lat: 45.75466, city: "Lyon", country: "FR" },
       work: 
@@ -87,29 +151,80 @@ const users = [
           typeWork: "Entrepreneur",
         }
       ,
-      linkRs: [],
+      linkRs: {},
       tags: [ "Frontend", "Angular"],
       buddies: [],
     },
-  ];
-  
-  router.get("/", async function (req, res, next) {
-  
-    for (let i = 0; i < users.length; i++) {
-      let newUser = new UserModel(users[i]);
-      let newUserSaved = await newUser.save();
-    }
-    res.render("index", { title: "Create DB" });
-  });
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  module.exports = router;
-  
+
+  {
+    admin: false,
+    onboarding: false,
+    firstName: "Pascal",
+    name: "Java",
+    email: "pj@gmail.com",
+    pwd: "123",
+    avatar: "https://tabatadreams.files.wordpress.com/2016/01/avatar-chat.jpg",
+    status: "#OPEN TO WORK",
+    presentation: "",
+    searchCurrent: "",
+    tel: 623455009,
+    capsule: {
+      nbBatch: 55,
+      campus: "Lyon",
+      cursus: "DevOps",
+    },
+    address: { long: 4.759, lat: 45.75466, city: "Lyon", country: "FR" },
+    work: {
+      work: "Développeur",
+      company: "PascalCompany",
+      dateDebut: "",
+      typeWork: "Entrepreneur",
+    },
+    linkRs: { linkedin: "", github: "" },
+    tags: ["FullStack", "Backend", "Java", "API", "BDD", "Python","Kotlin", "Swift", "PHP", "Flutter", "ReactJS", "ReactNative", "JavaScript"],
+    buddies: [],
+  },
+  {
+    admin: false,
+    onboarding: false,
+    firstName: "Lyon",
+    name: "Paris",
+    email: "lp@gmail.com",
+    pwd: "123",
+    avatar: "https://tabatadreams.files.wordpress.com/2016/01/avatar-chat.jpg",
+    status: "#OPEN TO WORK",
+    presentation: "",
+    searchCurrent: "",
+    tel: 623455009,
+    capsule: {
+      nbBatch: 55,
+      campus: "Lyon",
+      cursus: "DevOps",
+    },
+    address: { long: 4.759, lat: 45.7545, city: "Lyon", country: "FR" },
+    work: {
+      work: "DevOps",
+      company: "LyonCompany",
+      dateDebut: "",
+      typeWork: "Entrepreneur",
+    },
+    linkRs: {
+      linkedin: "",
+      github: "",
+    },
+    tags: ["API", "BDD", "ReactNative"],
+    buddies: [],
+  },
+
+*/
+];
+
+router.get("/", async function (req, res, next) {
+  for (let i = 0; i < users.length; i++) {
+    let newUser = new UserModel(users[i]);
+    let newUserSaved = await newUser.save();
+  }
+  res.render("index", { title: "Create DB" });
+});
+
+module.exports = router;

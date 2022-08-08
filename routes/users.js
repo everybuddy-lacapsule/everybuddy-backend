@@ -5,13 +5,17 @@ var UserModel = require("../models/users");
 // ROUTE POUR RECUPERER LE USER ENTIER EN BDD
 router.get("/getUserDatas", async (req, res, next) => {
   var userDatas;
-  var user = await UserModel.findOne({
-    _id: req.query.userID,
-  });
-  if (user) {
-    userDatas = user;
+  try {
+    var user = await UserModel.findOne({
+      _id: req.query.userID,
+    });
+    if (user) {
+      userDatas = user;
+    }
+    res.json({ userDatas });
+  } catch (error) {
+    console.log(error);
   }
-  res.json({ userDatas });
 });
 
 // ROUTE QUI VERIFIE SI EMAIL EXISTE EN BDD relié à CheckEmailScreen
