@@ -19,9 +19,11 @@ router.post("/check-email", async function (req, res, next) {
   var errorMessage = "";
   var userEmail = "";
   var emailExists = false;
+  console.log(req.body.email);
   var user = await UserModel.findOne({
     email: req.body.email.toLowerCase(),
   });
+  console.log('user', user)
 
   if (!req.body.email || !user) {
     emailExists = false;
