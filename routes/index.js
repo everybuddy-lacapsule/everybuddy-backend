@@ -110,30 +110,7 @@ router.post("/search", async (req, res, next) => {
   if (req.body.workType.length < 1) {
     typeWork = ["Entrepreneur", "En contrat", "Freelance", "En recherche"];
   }
-  // default tags treatment
-  var tags = req.body.tags;
-  //console.log(tags);
-  if (req.body.tags.length < 1) {
-    tags = [
-      "Frontend",
-      "Backend",
-      "Fullstack",
-      "JavaScript",
-      "AngularJS",
-      "ReactJS",
-      "VueJS",
-      "TypeScript",
-      "ReactNative",
-      "Swift",
-      "Kotlin",
-      "Flutter",
-      "BDD",
-      "API",
-      "Java",
-      "Python",
-      "PHP",
-    ];
-  }
+  var tags = req.body.tags
   // default status treatment
   var status = req.body.status;
   if (req.body.status.length < 1) {
@@ -154,68 +131,55 @@ router.post("/search", async (req, res, next) => {
       locationRequest: locationRequest,
     };
   }
-
   //radius en km
   let coordinate = calculRadius(location.long, location.lat, location.radius);
-  /*
-  let searchOptions = {};
-  if(req.body.nbBatch){
-    searchOptions['capsule.nbBatch'] = req.body.nbBatch;
-  }
-  if(req.body.location){}
-  if(req.body.radius){}
-  if(req.body.campus.length > 0){
-    searchOptions['capsule.campus'] = req.body.campus;
-  }
-  if(req.body.cursus.length > 0){
-    searchOptions['capsule.cursus'] = req.body.cursus;
-  }
-  if(req.body.status.length > 0){
-    searchOptions.status = {$all: req.body.status};
-  }
-  if(req.body.tags.length > 0){
-    searchOptions.tags = {$all: req.body.tags};
-  }
-  if(req.body.work.length > 0){
-    searchOptions['work.work'] = req.body.work;
-  }
-  if(req.body.workType.length > 0){
-    searchOptions['work.workType'] = req.body.workType;
-  }
-*/
-  // searchOptions.address = {long : {
-  //   $gte: coordinate.longMinDegree,
-  //   $lte: coordinate.longMaxDegree,
-  // }};
-  // searchOptions.address = {lat : {
-  //   $gte: coordinate.latMinDegree,
-  //   $lte: coordinate.latMaxDegree,
-  // }};
 
-  var users = await UserModel.find(
-    {
-      "address.long": {
-        $gte: coordinate.longMinDegree,
-        $lte: coordinate.longMaxDegree,
-      },
-      "address.lat": {
-        $gte: coordinate.latMinDegree,
-        $lte: coordinate.latMaxDegree,
-      },
-      "capsule.nbBatch": nbBatch,
-      "capsule.cursus": cursus,
-      "capsule.campus": campus,
-      "work.work": work,
-      "work.typeWork": typeWork,
-      tags: { $in: tags },
-      status: status,
-    }
-  );
+  if (req.body.tags.length>1){
+    var users = await UserModel.find(
+      {
+        "address.long": {
+          $gte: coordinate.longMinDegree,
+          $lte: coordinate.longMaxDegree,
+        },
+        "address.lat": {
+          $gte: coordinate.latMinDegree,
+          $lte: coordinate.latMaxDegree,
+        },
+        "capsule.nbBatch": nbBatch,
+        "capsule.cursus": cursus,
+        "capsule.campus": campus,
+        "work.work": work,
+        "work.typeWork": typeWork,
+        status: status,
+        tags:{$all: tags},
+          },
+    );
+  } else{
+    var users = await UserModel.find(
+      {
+        "address.long": {
+          $gte: coordinate.longMinDegree,
+          $lte: coordinate.longMaxDegree,
+        },
+        "address.lat": {
+          $gte: coordinate.latMinDegree,
+          $lte: coordinate.latMaxDegree,
+        },
+        "capsule.nbBatch": nbBatch,
+        "capsule.cursus": cursus,
+        "capsule.campus": campus,
+        "work.work": work,
+        "work.typeWork": typeWork,
+        status: status,
+          },
+    );
+  }
   
-
+  
   
   var success = false;
   users.length > 0 ? (success = true) : (success = false);
+
   res.json({
     success,
     users,
