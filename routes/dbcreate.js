@@ -1,8 +1,9 @@
 var express = require("express");
 var router = express.Router();
 var UserModel = require("../models/users");
-
-
+const StatusModel = require("../models/statuses");
+const TypeJobsModel = require("../models/typeJobs");
+/*
 const realUsers = [
   {
     admin: true,
@@ -11,7 +12,8 @@ const realUsers = [
     name: "Werlé",
     email: "williamwiut@gmail.com",
     pwd: "wouairley",
-    avatar: "https://drive.google.com/open?id=1bpLl0LLCz33LLDSGt_P1NHtt0D3_ivJP",
+    avatar:
+      "https://drive.google.com/open?id=1bpLl0LLCz33LLDSGt_P1NHtt0D3_ivJP",
     status: "#JUST CURIOUS",
     presentation: "",
     searchCurrent: "",
@@ -21,9 +23,8 @@ const realUsers = [
       campus: "Lyon",
       cursus: "",
     },
-    address: {long:  4.84890, lat: 45.75466, city: "Paris", country: "FR" },
-    work: 
-    {
+    address: { long: 4.8489, lat: 45.75466, city: "Paris", country: "FR" },
+    work: {
       work: "DevOps",
       company: "L'Empire",
       dateDebut: "",
@@ -40,7 +41,8 @@ const realUsers = [
     name: "Lepevneu",
     email: "mathieu.lenepveu.perso@gmail.com",
     pwd: "wouairley",
-    avatar: "https://drive.google.com/open?id=1bpLl0LLCz33LLDSGt_P1NHtt0D3_ivJP",
+    avatar:
+      "https://drive.google.com/open?id=1bpLl0LLCz33LLDSGt_P1NHtt0D3_ivJP",
     status: "#OPEN TO WORK",
     presentation: "",
     searchCurrent: "",
@@ -50,9 +52,8 @@ const realUsers = [
       campus: "Lyon",
       cursus: "",
     },
-    address: {long:  4.84890, lat: 45.75466, city: "Paris", country: "FR" },
-    work: 
-    {
+    address: { long: 4.8489, lat: 45.75466, city: "Paris", country: "FR" },
+    work: {
       work: "DevOps",
       company: "L'Empire",
       dateDebut: "",
@@ -62,8 +63,8 @@ const realUsers = [
     tags: ["ReactNative"],
     buddies: [],
   },
-]
-
+];
+*/
 
 const users = [
   /*
@@ -218,13 +219,49 @@ const users = [
 
 */
 ];
-
+/*
 router.get("/", async function (req, res, next) {
   for (let i = 0; i < users.length; i++) {
     let newUser = new UserModel(users[i]);
     let newUserSaved = await newUser.save();
   }
   res.render("index", { title: "Create DB" });
+});
+*/
+
+/*----------------------ACTIVE ONCE TIME TO CREATE A COLLECTION : Create collection Status--------------------------*/
+
+router.get("/createStatuses", async function (req, res, next) {
+  const statuses = {
+    statuses: ["# OPEN TO WORK", "# HIRING", "# PARTNER", "# JUST CURIOUS"],
+  };
+  let newStatuses = new StatusModel(statuses);
+
+  let newStatusesSaved = await newStatuses.save();
+  res.json({
+    title: "Collection status created",
+    collection: newStatusesSaved,
+  });
+});
+
+/*----------------------ACTIVE ONCE TIME TO CREATE A COLLECTION : Create collection typeJobs / typeWorks --------------------------*/
+router.get("/createTypeJobs", async function (req, res, next) {
+  const typeJobs = {
+    typeJobs: [
+      "Développeur",
+      "Product Owner",
+      "Data Scientist",
+      "DevOps",
+      "Scrum Master",
+    ],
+  };
+  let newTypeJobs = new TypeJobsModel(typeJobs);
+
+  let newTypeJobsSaved = await newTypeJobs.save();
+  res.json({
+    title: "Collection typeJobs created",
+    collection: newTypeJobsSaved,
+  });
 });
 
 module.exports = router;
