@@ -35,7 +35,6 @@ router.get("/:discussionID/lastMessage", async function (req, res, next) {
 
 /*---POST: save message in DB by discussionID, userID---- */
 router.post("/addMessage", async function (req, res, next) {
-  console.log('back', req.body.discussionID)
   if (req.body.discussionID) {
     try {
       const newMessageAdded = new MessageModel({
@@ -44,9 +43,6 @@ router.post("/addMessage", async function (req, res, next) {
         content: req.body.message,
         dateSend: Date.now(),
       });
-
-
-      //let lastMessage = messages;
       const savedMessage = await newMessageAdded.save();
       console.log(savedMessage);
       res.status(200).json(savedMessage);
@@ -55,6 +51,9 @@ router.post("/addMessage", async function (req, res, next) {
     }
   }
 });
+
+/*---GET: send a default message (ProfilScreen)---- */
+
 
 
 module.exports = router;
