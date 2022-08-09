@@ -103,6 +103,7 @@ router.put("/userDatas", async function (req, res, next) {
         },
       }
     );
+    
     //console.log(onboardingUpdate);
     res.status(200).json(onboardingUpdate.acknowledged);
   } catch (error) {
