@@ -15,6 +15,16 @@ const options = {
 
 const geocoder = NodeGeocoder(options);
 
+const calculRadius = (longDegree, latDegree, radius) => {
+  let diffLongFr = Number(radius) * 0.054;
+  let diffLatFr = Number(radius) * 0.009;
+  let longMaxDegree = longDegree + diffLongFr;
+  let longMinDegree = longDegree - diffLongFr;
+  let latMaxDegree = latDegree + diffLatFr;
+  let latMinDegree = latDegree - diffLatFr;
+  return { longMaxDegree, longMinDegree, latMaxDegree, latMinDegree };
+};
+
 // ROUTE POUR RECUPERER LE USER ENTIER EN BDD
 router.get("/getUserDatas", async (req, res, next) => {
   var userDatas;
@@ -79,9 +89,10 @@ router.post("/sign-in", async function (req, res, next) {
   res.json({ isLogin, errorMessage, userDatas });
 });
 
-// ROUTE qui verifie la location remplie par user
+// ROUTE qui verifie la location remplie par user and find alls users in this location
 router.post("/userLocation", async function (req, res, next) {
   let success = false;
+  let radius = 10;
   try {
     // Tranform location in Onboarding
     const response = await geocoder.geocode(req.body.location);
@@ -91,10 +102,21 @@ router.post("/userLocation", async function (req, res, next) {
       city: response[0].city,
       country: response[0].countryCode,
     };
+    let coordinate = calculRadius(address.long, address.lat, radius);
+
+    var users = await UserModel.find({
+      "address.long": {
+        $gte: coordinate.longMinDegree,
+        $lte: coordinate.longMaxDegree,
+      },
+      "address.lat": {
+        $gte: coordinate.latMinDegree,
+        $lte: coordinate.latMaxDegree,
+      },
+    });
     success = true;
-    console.log(address);
-    console.log(success);
-    res.status(200).json({ address, success });
+    console.log(users);
+    res.status(200).json({ address, success, users, radius });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error, success });
