@@ -79,8 +79,9 @@ router.post("/sign-in", async function (req, res, next) {
   res.json({ isLogin, errorMessage, userDatas });
 });
 
-// ROUTE qui remplie la DB avec les informations choisis par nouveaux utilisateur
-router.put("/userDatas", async function (req, res, next) {
+// ROUTE qui verifie la location remplie par user
+router.post("/userLocation", async function (req, res, next) {
+  let success = false;
   try {
     // Tranform location in Onboarding
     const response = await geocoder.geocode(req.body.location);
@@ -90,16 +91,30 @@ router.put("/userDatas", async function (req, res, next) {
       city: response[0].city,
       country: response[0].countryCode,
     };
+    success = true;
+    console.log(address);
+    console.log(success);
+    res.status(200).json({ address, success });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error, success });
+  }
+});
 
+// ROUTE qui remplie la DB avec les informations choisis par nouveaux utilisateur
+router.put("/userDatas", async function (req, res, next) {
+  console.log(req.body);
+  try {
     const onboardingUpdate = await UserModel.updateOne(
       { _id: req.body.userID },
       {
         $set: {
-          address: address,
+          address: req.body.address,
           "work.work": req.body.work,
           "work.typeWork": req.body.typeWork,
           status: req.body.status,
           tags: req.body.tags,
+          onboarding: true,
         },
       }
     );
