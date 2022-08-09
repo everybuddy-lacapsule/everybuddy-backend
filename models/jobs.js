@@ -1,7 +1,7 @@
 var mongoose = require("mongoose");
 
 var jobSchema = mongoose.Schema({
-    name: String    
+    jobs: Object    
 });
 
 var JobModel = mongoose.model("jobs", jobSchema);

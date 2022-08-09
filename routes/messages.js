@@ -3,7 +3,6 @@ var router = express.Router();
 var UserModel = require("../models/users");
 const MessageModel = require("../models/messages");
 
-
 /*---GET: find and send list messages of user by discussionID---- */
 router.get("/:discussionID", async function (req, res, next) {
   let discussionID = req.params.discussionID;

@@ -1,7 +1,9 @@
 var express = require("express");
 var router = express.Router();
 var UserModel = require("../models/users");
-
+const StatusModel = require("../models/statuses");
+const TypeJobsModel = require("../models/typeJobs");
+const JobModel = require("../models/jobs");
 
 const realUsers = [
   {
@@ -11,7 +13,8 @@ const realUsers = [
     name: "Werlé",
     email: "williamwiut@gmail.com",
     pwd: "wouairley",
-    avatar: "https://drive.google.com/open?id=1bpLl0LLCz33LLDSGt_P1NHtt0D3_ivJP",
+    avatar:
+      "https://drive.google.com/open?id=1bpLl0LLCz33LLDSGt_P1NHtt0D3_ivJP",
     status: "#JUST CURIOUS",
     presentation: "",
     searchCurrent: "",
@@ -21,9 +24,8 @@ const realUsers = [
       campus: "Lyon",
       cursus: "",
     },
-    address: {long:  4.84890, lat: 45.75466, city: "Paris", country: "FR" },
-    work: 
-    {
+    address: { long: 4.8489, lat: 45.75466, city: "Paris", country: "FR" },
+    work: {
       work: "DevOps",
       company: "L'Empire",
       dateDebut: "",
@@ -228,6 +230,56 @@ router.get("/", async function (req, res, next) {
     let newUserSaved = await newUser.save();
   }
   res.render("index", { title: "Create DB" });
+});
+
+
+/*----------------------ACTIVE ONCE TIME TO CREATE A COLLECTION : Create collection Status--------------------------*/
+
+router.post("/createStatuses", async function (req, res, next) {
+  const statuses = {
+    statuses: ["# OPEN TO WORK", "# HIRING", "# PARTNER", "# JUST CURIOUS"],
+  };
+  let newStatuses = new StatusModel(statuses);
+
+  let newStatusesSaved = await newStatuses.save();
+  res.json({
+    title: "Collection status created",
+    collection: newStatusesSaved,
+  });
+});
+
+/*----------------------ACTIVE ONCE TIME TO CREATE A COLLECTION : Create collection jobs / works --------------------------*/
+router.post("/createJobs", async function (req, res, next) {
+  const jobs = {
+    jobs: [
+      "Développeur",
+      "Product Owner",
+      "Data Scientist",
+      "DevOps",
+      "Scrum Master",
+    ],
+  };
+  let newJobs = new JobModel(jobs);
+
+  let newJobsSaved = await newJobs.save();
+  res.json({
+    title: "Collection jobs created",
+    collection: newJobsSaved,
+  });
+});
+
+/*----------------------ACTIVE ONCE TIME TO CREATE A COLLECTION : Create collection typeJobs / typeWorks --------------------------*/
+router.post("/createTypeJobs", async function (req, res, next) {
+  const typeJobs = {
+    typeJobs: ["Entrepreneur", "En contrat", "Freelance", "En recherche"],
+  };
+  let newTypeJobs = new TypeJobsModel(typeJobs);
+
+  let newTypeJobsSaved = await newTypeJobs.save();
+  res.json({
+    title: "Collection typeJobs created",
+    collection: newTypeJobsSaved,
+  });
 });
 
 module.exports = router;
