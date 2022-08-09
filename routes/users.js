@@ -92,7 +92,7 @@ router.post("/sign-in", async function (req, res, next) {
 // ROUTE qui verifie la location remplie par user and find alls users in this location
 router.post("/userLocation", async function (req, res, next) {
   let success = false;
-  let radius = 5;
+  let radius = 10;
   try {
     // Tranform location in Onboarding
     const response = await geocoder.geocode(req.body.location);
