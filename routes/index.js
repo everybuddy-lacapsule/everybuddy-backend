@@ -192,40 +192,30 @@ router.post("/search", async (req, res, next) => {
   //   $lte: coordinate.latMaxDegree,
   // }};
 
-  var users = await UserModel.find(
-    {
-      "address.long": {
-        $gte: coordinate.longMinDegree,
-        $lte: coordinate.longMaxDegree,
-      },
-      "address.lat": {
-        $gte: coordinate.latMinDegree,
-        $lte: coordinate.latMaxDegree,
-      },
-      "capsule.nbBatch": nbBatch,
-      "capsule.cursus": cursus,
-      "capsule.campus": campus,
-      "work.work": work,
-      "work.typeWork": typeWork,
-      tags: { $in: tags },
-      status: status,
-    }
-  );
-  
+  var users = await UserModel.find({
+    "address.long": {
+      $gte: coordinate.longMinDegree,
+      $lte: coordinate.longMaxDegree,
+    },
+    "address.lat": {
+      $gte: coordinate.latMinDegree,
+      $lte: coordinate.latMaxDegree,
+    },
+    "capsule.nbBatch": nbBatch,
+    "capsule.cursus": cursus,
+    "capsule.campus": campus,
+    "work.work": work,
+    "work.typeWork": typeWork,
+    tags: { $in: tags },
+    status: status,
+  });
 
-  
   var success = false;
   users.length > 0 ? (success = true) : (success = false);
   res.json({
     success,
     users,
     location,
-    cursus,
-    campus,
-    status,
-    tags,
-    work,
-    typeWork,
   });
 });
 
