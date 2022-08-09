@@ -20,42 +20,45 @@ router.get("/getUserDatas", async (req, res, next) => {
 // ROUTE POUR UPDATE LE PROFILE USER 
 router.post("/updateProfile", async (req, res, next) => {
   
-  await UserModel.updateOne(
+  var updatedUser = await UserModel.updateOne(
     { _id : req.body.id},
     { 
-        firstName: req.body.firsName,
+        firstName: req.body.firstName,
         name: req.body.name,
         avatar: req.body.avatar,
         status: req.body.status,
         presentation: req.body.presentation,
         searchCurrent: req.body.searchCurrent,
         capsule: {
-          nbBatch: req.body.capsule.nbBatch,
-          campus: req.body.capsule.campus,
-          cursus: req.body.capsule.cursus,
+          nbBatch: req.body.nbBatch,
+          campus: req.body.campus,
+          cursus: req.body.cursus,
         },
         address: {
-          long:  req.body.address.long, 
-          lat: req.body.address.lat, 
-          city: req.body.address.city, 
-          country: req.body.address.country},
+          long:  req.body.long, 
+          lat: req.body.lat, 
+          city: req.body.city, 
+          country: req.body.country},
         work: 
         {
-          work: req.body.work.work,
-          company: req.body.work.company,
-          typeWork: req.body.work.typeWork,
+          work: req.body.work,
+          company: req.body.company,
+          typeWork: req.body.typeWork,
         },
         linkRs:
         {
-          linkedin: req.body.linkRs.linkedin,
-          github: req.body.linkRs.github,
+          linkedin: req.body.linkedin,
+          github: req.body.github,
 
         },
         tags: req.body.tags,      
     }
-
  );
-
+if (updatedUser){
+  res.json({sucess: true, updatedUser})
+}else{
+  res.json({sucess: false})
+}
 });
 
 // ROUTE QUI VERIFIE SI EMAIL EXISTE EN BDD relié à CheckEmailScreen

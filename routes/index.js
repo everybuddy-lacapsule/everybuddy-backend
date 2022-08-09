@@ -124,6 +124,7 @@ router.post("/search", async (req, res, next) => {
   // appel de geocode api (google)
   if (!location) {
     const response = await geocoder.geocode(locationRequest);
+    console.log(response)
     location = {
       long: Number.parseFloat(response[0].longitude),
       lat: Number.parseFloat(response[0].latitude),
