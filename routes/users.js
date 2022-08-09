@@ -43,46 +43,58 @@ router.get("/getUserDatas", async (req, res, next) => {
 // ROUTE POUR UPDATE LE PROFILE USER 
 router.post("/updateProfile", async (req, res, next) => {
   console.log('updateProfile', req.body)
+  try {
+    // Tranform location in Onboarding
+    const response = await geocoder.geocode(req.body.address.city);
+    const address = {
+      long: Number.parseFloat(response[0].longitude),
+      lat: Number.parseFloat(response[0].latitude),
+      city: response[0].city,
+      country: response[0].countryCode,
+    };
+    var updatedUser = await UserModel.updateOne(
+      { _id : req.body._id},
+      { 
+          firstName: req.body.firstName,
+          name: req.body.name,
+          avatar: req.body.avatar,
+          status: req.body.status,
+          presentation: req.body.presentation,
+          searchCurrent: req.body.searchCurrent,
+          capsule: {
+            nbBatch: req.body.capsule.nbBatch,
+            campus: req.body.capsule.campus,
+            cursus: req.body.capsule.cursus,
+          },
+          address: address,
+          work: 
+          {
+            work: req.body.work.work,
+            company: req.body.work.company,
+            typeWork: req.body.work.typeWork,
+          },
+          linkRs:
+          {
+            linkedin: req.body.linkRs.linkedin,
+            github: req.body.linkRs.github,
   
-  var updatedUser = await UserModel.updateOne(
-    { _id : req.body._id},
-    { 
-        firstName: req.body.firstName,
-        name: req.body.name,
-        avatar: req.body.avatar,
-        status: req.body.status,
-        presentation: req.body.presentation,
-        searchCurrent: req.body.searchCurrent,
-        capsule: {
-          nbBatch: req.body.capsule.nbBatch,
-          campus: req.body.capsule.campus,
-          cursus: req.body.capsule.cursus,
-        },
-        address: {
-          long:  req.body.address.long, 
-          lat: req.body.address.lat, 
-          city: req.body.address.city, 
-          country: req.body.address.country},
-        work: 
-        {
-          work: req.body.work.work,
-          company: req.body.work.company,
-          typeWork: req.body.work.typeWork,
-        },
-        linkRs:
-        {
-          linkedin: req.body.linkRs.linkedin,
-          github: req.body.linkRs.github,
-
-        },
-        tags: req.body.tags,      
-    }
- );
-if (updatedUser){
-  res.json({sucess: true, updatedUser})
-}else{
-  res.json({sucess: false})
-}
+          },
+          tags: req.body.tags,      
+      });
+    var success = true;
+    res.status(200).json({ success })
+  } catch (error) {
+      console.log(error);
+      res.status(500).json({ error, success });
+    };
+  
+  
+ 
+// if (updatedUser){
+//   res.json({sucess: true, updatedUser})
+// }else{
+//   res.json({sucess: false})
+// }
 });
 
 // ROUTE QUI VERIFIE SI EMAIL EXISTE EN BDD relié à CheckEmailScreen
