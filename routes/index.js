@@ -185,12 +185,6 @@ router.post("/search", async (req, res, next) => {
     success,
     users,
     location,
-    cursus,
-    campus,
-    status,
-    tags,
-    work,
-    typeWork,
   });
 });
 
