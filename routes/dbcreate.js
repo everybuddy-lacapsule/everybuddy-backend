@@ -29,39 +29,42 @@ const realUsers = [
       dateDebut: "",
       typeWork: "Freelance",
     },
-    linkRs: [],
+    linkRs: {
+      linkedin: "",
+      github: "",
+    },
     tags: ["ReactNative"],
     buddies: [],
   },
-  {
-    admin: true,
-    onboarding: false,
-    firstName: "Mathieu",
-    name: "Lepevneu",
-    email: "mathieu.lenepveu.perso@gmail.com",
-    pwd: "wouairley",
-    avatar: "https://drive.google.com/open?id=1bpLl0LLCz33LLDSGt_P1NHtt0D3_ivJP",
-    status: "#OPEN TO WORK",
-    presentation: "",
-    searchCurrent: "",
-    tel: "",
-    capsule: {
-      nbBatch: 55,
-      campus: "Lyon",
-      cursus: "",
-    },
-    address: {long:  4.84890, lat: 45.75466, city: "Paris", country: "FR" },
-    work: 
-    {
-      work: "DevOps",
-      company: "L'Empire",
-      dateDebut: "",
-      typeWork: "Freelance",
-    },
-    linkRs: [],
-    tags: ["ReactNative"],
-    buddies: [],
-  },
+  // {
+  //   admin: true,
+  //   onboarding: false,
+  //   firstName: "Mathieu",
+  //   name: "Lepevneu",
+  //   email: "mathieu.lenepveu.perso@gmail.com",
+  //   pwd: "wouairley",
+  //   avatar: "https://drive.google.com/open?id=1bpLl0LLCz33LLDSGt_P1NHtt0D3_ivJP",
+  //   status: "#OPEN TO WORK",
+  //   presentation: "",
+  //   searchCurrent: "",
+  //   tel: "",
+  //   capsule: {
+  //     nbBatch: 55,
+  //     campus: "Lyon",
+  //     cursus: "",
+  //   },
+  //   address: {long:  4.84890, lat: 45.75466, city: "Paris", country: "FR" },
+  //   work: 
+  //   {
+  //     work: "DevOps",
+  //     company: "L'Empire",
+  //     dateDebut: "",
+  //     typeWork: "Freelance",
+  //   },
+  //   linkRs: [],
+  //   tags: ["ReactNative"],
+  //   buddies: [],
+  // },
 ]
 
 
@@ -220,8 +223,8 @@ const users = [
 ];
 
 router.get("/", async function (req, res, next) {
-  for (let i = 0; i < users.length; i++) {
-    let newUser = new UserModel(users[i]);
+  for (let i = 0; i < realUsers.length; i++) {
+    let newUser = new UserModel(realUsers[i]);
     let newUserSaved = await newUser.save();
   }
   res.render("index", { title: "Create DB" });

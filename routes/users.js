@@ -17,6 +17,49 @@ router.get("/getUserDatas", async (req, res, next) => {
     console.log(error);
   }
 });
+// ROUTE POUR UPDATE LE PROFILE USER 
+router.post("/updateProfile", async (req, res, next) => {
+  
+  var updatedUser = await UserModel.updateOne(
+    { _id : req.body.id},
+    { 
+        firstName: req.body.firstName,
+        name: req.body.name,
+        avatar: req.body.avatar,
+        status: req.body.status,
+        presentation: req.body.presentation,
+        searchCurrent: req.body.searchCurrent,
+        capsule: {
+          nbBatch: req.body.nbBatch,
+          campus: req.body.campus,
+          cursus: req.body.cursus,
+        },
+        address: {
+          long:  req.body.long, 
+          lat: req.body.lat, 
+          city: req.body.city, 
+          country: req.body.country},
+        work: 
+        {
+          work: req.body.work,
+          company: req.body.company,
+          typeWork: req.body.typeWork,
+        },
+        linkRs:
+        {
+          linkedin: req.body.linkedin,
+          github: req.body.github,
+
+        },
+        tags: req.body.tags,      
+    }
+ );
+if (updatedUser){
+  res.json({sucess: true, updatedUser})
+}else{
+  res.json({sucess: false})
+}
+});
 
 // ROUTE QUI VERIFIE SI EMAIL EXISTE EN BDD relié à CheckEmailScreen
 router.post("/check-email", async function (req, res, next) {
