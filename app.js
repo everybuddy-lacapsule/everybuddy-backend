@@ -1,3 +1,4 @@
+var fileUpload = require('express-fileupload');
 require("./models/connections"); // BDD
 var createError = require("http-errors");
 var express = require("express");
@@ -15,6 +16,7 @@ const datasRouter = require("./routes/datas");
 var app = express();
 
 // view engine setup
+app.use(fileUpload());
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
