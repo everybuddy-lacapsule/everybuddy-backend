@@ -54,10 +54,10 @@ router.post("/search", async (req, res, next) => {
   // default radius treatment
   var radius = req.body.radius;
   if (!req.body.radius) {
-    radius = 400;
+    radius = 600;
   }
   if (req.body.radius === 100) {
-    radius = 400;
+    radius = 600;
     location = {
       long: 2.4302,
       lat: 46.536,
@@ -71,15 +71,15 @@ router.post("/search", async (req, res, next) => {
     location = {
       long: 2.4302,
       lat: 46.536,
-      radius: 400,
+      radius: 600,
       locationRequest: "",
     };
   }
-  else if(req.body.location === "France" || req.body.location === "france"){
+  else if(req.body.location === "France" || req.body.location === "france" || req.body.location === "france " || req.body.location === "France "){
     location = {
       long: 2.4302,
       lat: 46.536,
-      radius: 400,
+      radius: 600,
       locationRequest: "",
     };
   }
@@ -129,7 +129,7 @@ router.post("/search", async (req, res, next) => {
   //radius en km
   let coordinate = calculRadius(location.long, location.lat, location.radius);
 
-  if (req.body.tags.length>1){
+  if (req.body.tags.length>0){
     var users = await UserModel.find(
       {
         "address.long": {
