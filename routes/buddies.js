@@ -30,7 +30,7 @@ router.put("/addBuddy", async (req, res, next) => {
     //res.status(200).json({ success, buddiesInfos: userBuddies.buddies });
   } catch (error) {
     console.log(error);
-    res.status(500).json(error);
+    res.status(500).json(success, error);
   }
 });
 
@@ -54,7 +54,7 @@ router.delete("/deleteBuddy", async (req, res, next) => {
     success = true;
     res.status(200).json({ success, buddiesInfos: userUpdate.buddies });
   } catch (error) {
-    res.status(500).json(error);
+    res.status(500).json({success, error});
   }
 });
 
@@ -72,7 +72,7 @@ router.get("/", async (req, res, next) => {
 
     res.status(200).json({ success, buddiesInfos: user.buddies });
   } catch (error) {
-    res.status(500).json(error);
+    res.status(500).json(success, error);
   }
 });
 module.exports = router;
