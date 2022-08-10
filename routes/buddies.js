@@ -63,7 +63,7 @@ router.delete("/deleteBuddy", async (req, res, next) => {
 });
 
 /* ----------------------GET: read buddie in DB------------------ */
-router.get("/", async (req, res, next) => {
+router.get("/buddiesList", async (req, res, next) => {
   let listInfosBuddies = [];
   let buddyInfos = {};
   try {
@@ -72,17 +72,15 @@ router.get("/", async (req, res, next) => {
     });
 
     for (let i = 0; i < user.buddies.length; i++) {
-      console.log(user.buddies);
-      let buddy = await UserModel.findOne({ _id: user.buddies[i]._id });
-
+      let buddy = await UserModel.findOne({ _id: user.buddies[i] });
       buddyInfos = {
         buddyID: buddy._id,
         name: buddy.name,
         firstName: buddy.firstName,
-        nbBatch: buddy.capsule.nbBatch,
-        work: buddy.work.work,
-        company: buddy.work.company,
-        typeWork: buddy.work.typeWork,
+        nbBatch: buddy.capsule?.nbBatch,
+        work: buddy.work?.work,
+        company: buddy.work?.company,
+        typeWork: buddy.work?.typeWork,
       };
       listInfosBuddies.push(buddyInfos);
     }
