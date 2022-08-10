@@ -71,55 +71,49 @@ router.post("/search", async (req, res, next) => {
     location = {
       long: 2.4302,
       lat: 46.536,
-      radius: radius,
+      radius: 400,
+      locationRequest: "",
+    };
+  }
+  else if(req.body.location === "France" || req.body.location === "france"){
+    location = {
+      long: 2.4302,
+      lat: 46.536,
+      radius: 400,
       locationRequest: "",
     };
   }
   // default cursus treatment
   var cursus = req.body.cursus;
   if (req.body.cursus.length < 1) {
-    cursus = ["Fullstack", "DevOps", "Code for business"];
+    cursus = {$exists : true}
   }
   // default campus treatment
   var campus = req.body.campus;
   if (req.body.campus.length < 1) {
-    campus = [
-      "Paris",
-      "Lyon",
-      "Marseille",
-      "Nice",
-      "Lille",
-      "Bordeaux",
-      "Bruxelles",
-      "Monaco",
-    ];
+    campus = { $exists: true}
   }
   // default work treatment
   var work = req.body.work;
   if (req.body.work.length < 1) {
-    work = [
-      "Développeur",
-      "Product Owner",
-      "Data Scientist",
-      "DevOps",
-      "Scrum Master",
-    ];
+  
+    work = { $exists: true}
   }
   // default typeWork treatment
   var typeWork = req.body.workType;
   if (req.body.workType.length < 1) {
-    typeWork = ["Entrepreneur", "En contrat", "Freelance", "En recherche"];
+    typeWork =  { $exists: true}
   }
   var tags = req.body.tags
   // default status treatment
   var status = req.body.status;
   if (req.body.status.length < 1) {
-    status = ["#OPEN TO WORK", "#HIRING", "#PARTNER", "#JUST CURIOUS"];
+    status = { $exists: true }
   }
   // default batch treatment
   var nbBatch = req.body.nbBatch;
   if (!req.body.nbBatch) {
-    nbBatch = { $gte: 1 };
+    nbBatch = { $exists: true };
   }
   // appel de geocode api (google)
   if (!location) {
