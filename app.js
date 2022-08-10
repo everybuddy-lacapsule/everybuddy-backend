@@ -11,6 +11,7 @@ var dbRouter = require("./routes/dbcreate");
 var discussionsRouter = require("./routes/discussions");
 const messagesRouter = require("./routes/messages");
 const datasRouter = require("./routes/datas");
+const buddiesRouter = require("./routes/buddies");
 
 var app = express();
 
@@ -30,6 +31,7 @@ app.use("/users", usersRouter);
 app.use("/discussions", discussionsRouter);
 app.use("/messages", messagesRouter);
 app.use("/datas", datasRouter);
+app.use("/buddies", buddiesRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
