@@ -25,6 +25,7 @@ const calculRadius = (longDegree, latDegree, radius) => {
   return { longMaxDegree, longMinDegree, latMaxDegree, latMinDegree };
 };
 
+
 // ROUTE POUR RECUPERER LE USER ENTIER EN BDD
 router.get("/getUserDatas", async (req, res, next) => {
   var userDatas;
