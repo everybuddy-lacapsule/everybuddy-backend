@@ -5,99 +5,74 @@ var UserModel = require("../models/users");
 
 /* ----------------------PUT: update/add buddy in list buddies in DB------------------ */
 router.put("/addBuddy", async (req, res, next) => {
+  let success = false;
   try {
     let user = await UserModel.findOne({
       _id: req.body.userID,
     });
-    user.buddies.push(req.body.buddyID);
-    let userSaved = await user.save();
 
-    // let newBuddy = new BuddyModel({ buddyID: req.body.buddyID });
-    res.status(200).json(userSaved);
+    user.buddies.push(req.body.buddyID);
+    // Save update buddies
+    let userSaved = await user.save();
+    if (userSaved) {
+      // Get buddy infos (updated)
+      let userBuddies = await UserModel.findOne({
+        _id: req.body.userID,
+      }).populate({
+        path: "buddies",
+        select:
+          "name firstName avatar capsule.nbBatch work.work work.typeWork work.company",
+      });
+      success = true;
+      res.status(200).json({ success, buddiesInfos: userBuddies.buddies });
+    }
+
+    //res.status(200).json({ success, buddiesInfos: userBuddies.buddies });
   } catch (error) {
     console.log(error);
-    res.status(500).json(error);
+    res.status(500).json(success, error);
   }
 });
 
 /* ----------------------DELETE: delete buddie in DB------------------ */
 router.delete("/deleteBuddy", async (req, res, next) => {
-  let listInfosBuddies = [];
-  let buddyInfos = {};
+  let success = false;
   try {
     let update = await UserModel.findOneAndUpdate(
       { _id: req.body.userID },
       { $pull: { buddies: req.body.buddyID } }
-    )
-      .then((response) => console.log(response))
-      .catch((err) => console.log("Error", err));
+    );
 
-    let updateSaved = update.save();
-    console.log(updateSaved);
-    /*
-    if (updateSaved.modifiedCount > 0) {
-      let user = await UserModel.findOne({
-        _id: req.query.userID,
-      });
+    let userUpdate = await UserModel.findOne({
+      _id: req.body.userID,
+    }).populate({
+      path: "buddies",
+      select:
+        "name firstName avatar capsule.nbBatch work.work work.typeWork work.company",
+    });
 
-      for (let i = 0; i < user.buddies.length; i++) {
-        console.log(user.buddies);
-        let buddy = await UserModel.findOne({ _id: user.buddies[i]._id });
-
-        buddyInfos = {
-          buddyID: buddy._id,
-          name: buddy.name,
-          firstName: buddy.firstName,
-          nbBatch: buddy.capsule.nbBatch,
-          work: buddy.work.work,
-          company: buddy.work.company,
-          typeWork: buddy.work.typeWork,
-        };
-        listInfosBuddies.push(buddyInfos);
-      }
-    }
-    */
-    res.status(200).json(updateSaved);
+    success = true;
+    res.status(200).json({ success, buddiesInfos: userUpdate.buddies });
   } catch (error) {
-    res.status(500).json(error);
+    res.status(500).json({success, error});
   }
 });
 
 /* ----------------------GET: read buddie in DB------------------ */
 router.get("/", async (req, res, next) => {
+  let success = false;
   try {
     let user = await UserModel.findOne({
       _id: req.query.userID,
     }).populate({
       path: "buddies",
       select:
-        "name firstName capsule.nbBatch work.work work.typeWork work.company",
+        "name firstName avatar capsule.nbBatch work.work work.typeWork work.company",
     });
 
-    res.status(200).json(user.buddies);
+    res.status(200).json({ success, buddiesInfos: user.buddies });
   } catch (error) {
-    res.status(500).json(error);
+    res.status(500).json(success, error);
   }
 });
 module.exports = router;
-
-//const listBuddies = user.buddies;
-/*
-     
-*/
-/*
-      let buddyInfos = {
-      buddyID: req.body.buddyID,
-      name: buddy.name,
-      firstName: buddy.firstName,
-      nbBatch: buddy.capsule.nbBatch,
-      work: buddy.work.work,
-      company: buddy.work.company,
-      typeWork: buddy.work.typeWork,
-    };
-
-    const newBuddy = new BuddyModel(buddyInfos);
-    let newBuddySaved = await newBuddy.save();
-
-    console.log(buddyInfos);
-      */
