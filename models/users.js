@@ -44,7 +44,7 @@ var userSchema = mongoose.Schema({
   work: workSchema,
   linkRs: linkSchema,
   tags: Array,
-  buddies: Array,
+  buddies: [{ type: mongoose.Schema.Types.ObjectId, ref: "users" }],
 });
 
 var UserModel = mongoose.model("users", userSchema);

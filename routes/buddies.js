@@ -25,7 +25,7 @@ router.delete("/deleteBuddy", async (req, res, next) => {
   let listInfosBuddies = [];
   let buddyInfos = {};
   try {
-    let update = await UserModel.updateOne(
+    let update = await UserModel.findOneAndUpdate(
       { _id: req.body.userID },
       { $pull: { buddies: req.body.buddyID } }
     )
@@ -34,7 +34,7 @@ router.delete("/deleteBuddy", async (req, res, next) => {
 
     let updateSaved = update.save();
     console.log(updateSaved);
-    
+    /*
     if (updateSaved.modifiedCount > 0) {
       let user = await UserModel.findOne({
         _id: req.query.userID,
@@ -56,7 +56,8 @@ router.delete("/deleteBuddy", async (req, res, next) => {
         listInfosBuddies.push(buddyInfos);
       }
     }
-    res.status(200).json(buddiesListUpdate);
+    */
+    res.status(200).json(updateSaved);
   } catch (error) {
     res.status(500).json(error);
   }
@@ -64,29 +65,16 @@ router.delete("/deleteBuddy", async (req, res, next) => {
 
 /* ----------------------GET: read buddie in DB------------------ */
 router.get("/", async (req, res, next) => {
-  let listInfosBuddies = [];
-  let buddyInfos = {};
   try {
     let user = await UserModel.findOne({
       _id: req.query.userID,
+    }).populate({
+      path: "buddies",
+      select:
+        "name firstName capsule.nbBatch work.work work.typeWork work.company",
     });
 
-    for (let i = 0; i < user.buddies.length; i++) {
-      console.log(user.buddies);
-      let buddy = await UserModel.findOne({ _id: user.buddies[i]._id });
-
-      buddyInfos = {
-        buddyID: buddy._id,
-        name: buddy.name,
-        firstName: buddy.firstName,
-        nbBatch: buddy.capsule.nbBatch,
-        work: buddy.work.work,
-        company: buddy.work.company,
-        typeWork: buddy.work.typeWork,
-      };
-      listInfosBuddies.push(buddyInfos);
-    }
-    res.status(200).json(buddyInfos);
+    res.status(200).json(user.buddies);
   } catch (error) {
     res.status(500).json(error);
   }
