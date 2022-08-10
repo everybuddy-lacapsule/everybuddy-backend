@@ -213,9 +213,11 @@ router.put("/userDatas", async function (req, res, next) {
 	}
 });
 
+// ROUTE QUI UPLAOD LA PHOTO DE L'AVATAR
 router.post("/upload", async function (req, res, next) {
 	var imagePath = "./tmp/" + uniqid() + ".jpg";
 	var resultCopy = await req.files.photo.mv(imagePath);
+
 
 	if (!resultCopy) {
 		var resultCloudinary = await cloudinary.uploader.upload(imagePath);
