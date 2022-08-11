@@ -4,6 +4,7 @@ var UserModel = require("../models/users");
 var cloudinary = require("cloudinary").v2;
 const fs = require("fs");
 var uniqid = require("uniqid");
+var mongoose = require ("mongoose");
 
 require("dotenv").config();
 const { API_MAP_TOKEN, CLOUD_NAME, API_KEY, API_SECRET } = process.env;
@@ -54,7 +55,6 @@ router.get("/getUserDatas", async (req, res, next) => {
 });
 // ROUTE POUR UPDATE LE PROFILE USER
 router.post("/updateProfile", async (req, res, next) => {
-  console.log("updateProfile", req.body);
   try {
     // Tranform location in Onboarding
     const response = await geocoder.geocode(req.body.address.city);
@@ -110,11 +110,9 @@ router.post("/check-email", async function (req, res, next) {
   var errorMessage = "";
   var userEmail = "";
   var emailExists = false;
-  console.log(req.body.email);
   var user = await UserModel.findOne({
     email: req.body.email.toLowerCase(),
   });
-  console.log("user", user);
 
   if (!req.body.email || !user) {
     emailExists = false;
@@ -181,7 +179,6 @@ router.post("/userLocation", async function (req, res, next) {
       },
     });
     success = true;
-    console.log(users);
     res.status(200).json({ address, success, users, radius });
   } catch (error) {
     console.log(error);
@@ -191,7 +188,6 @@ router.post("/userLocation", async function (req, res, next) {
 
 // ROUTE qui remplie la DB avec les informations choisis par nouveaux utilisateur
 router.put("/userDatas", async function (req, res, next) {
-  console.log(req.body);
   try {
     const onboardingUpdate = await UserModel.updateOne(
       { _id: req.body.userID },
@@ -207,7 +203,6 @@ router.put("/userDatas", async function (req, res, next) {
       }
     );
 
-    //console.log(onboardingUpdate);
     res.status(200).json(onboardingUpdate.acknowledged);
   } catch (error) {
     console.log(error);
@@ -232,5 +227,30 @@ router.post("/upload", async function (req, res, next) {
     res.status(500).json(error);
   }
 });
+
+// ROUTE POUR RECUPERER LE USER PARTIEL EN BDD POUR LA DISCUSSION
+router.get("/getUserDiscussion", async (req, res, next) => {
+	let userDatas;
+	try {
+	  if (mongoose.Types.ObjectId.isValid(req.query.userID)) {
+		var user = await UserModel.findOne({
+		  _id: req.query.userID,
+		});
+		if (user) {
+		userDatas = {
+			_id: user._id,
+			name: user.name,
+			firstName: user.firstName,
+			avatar: user.avatar
+		  };
+		}
+		res.json({ userDatas });
+	  } else {
+		console.log("te roi");
+	  }
+	} catch (error) {
+	  console.log(error);
+	}
+  });
 
 module.exports = router;
