@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 var UserModel = require("../models/users");
 const MessageModel = require("../models/messages");
+const DiscussionModel = require("../models/discussions");
 
 /*---GET: find and send list messages of user by discussionID---- */
 router.get("/:discussionID", async function (req, res, next) {
@@ -25,8 +26,19 @@ router.get("/:discussionID/lastMessage", async function (req, res, next) {
       let messages = await MessageModel.find({
         discussionID: discussionID,
       }).sort({ dateSend: -1 });
-      res.status(200).json(messages[0]);
+      if (messages.length === 0) {
+        const result = await DiscussionModel.deleteOne({ _id: discussionID });
+        if (result.deletedCount === 1) {
+          console.log("Successfully deleted one document.");
+          res.status(200).json();
+        } else {
+          console.log("No discussion empty. Deleted 0 documents.");
+        }
+      } else {
+        res.status(200).json(messages[0]);
+      }
     } catch (error) {
+      console.log(error);
       res.status(500).json(error);
     }
   }
@@ -52,7 +64,5 @@ router.post("/addMessage", async function (req, res, next) {
 });
 
 /*---GET: send a default message (ProfilScreen)---- */
-
-
 
 module.exports = router;
