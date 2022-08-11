@@ -90,7 +90,7 @@ router.post("/updateProfile", async (req, res, next) => {
 			}
 		);
 		var success = true;
-		res.status(200).json({ success });
+		res.status(200).json({ success, country: address.country });
 	} catch (error) {
 		console.log(error);
 		res.status(500).json({ error, success });
@@ -214,16 +214,22 @@ router.put("/userDatas", async function (req, res, next) {
 });
 
 router.post("/upload", async function (req, res, next) {
+  try{
 	var imagePath = "./tmp/" + uniqid() + ".jpg";
 	var resultCopy = await req.files.photo.mv(imagePath);
 
 	if (!resultCopy) {
 		var resultCloudinary = await cloudinary.uploader.upload(imagePath);
 		fs.unlinkSync(imagePath);
-		res.json({ url: resultCloudinary.url });
-	} else {
-		res.json({ result: false });
-	}
+		res.status(200).json({ url: resultCloudinary.url });
+	} else{
+    res.status(300).json({ result: false });
+
+  }
+	
+} catch (error) {
+  res.status(500).json(error);
+}
 });
 
 module.exports = router;
