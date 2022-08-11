@@ -55,6 +55,9 @@ const realUsers =
       "name": "ARROYO",
       "firstname": "Fabien",
       "email": "fabien_a09@outlook.com",
+      "nbbatch": 50,
+      "campus": "Paris",
+      cursus: "Fullstack",
 
   },
   {

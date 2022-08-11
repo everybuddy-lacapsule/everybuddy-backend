@@ -1,7 +1,13 @@
 var mongoose = require("mongoose");
 // Creation un schéma
 var buddySchema = mongoose.Schema({
-  idBuddy: String,
+  buddyID: String,
+  name: String,
+  firstName: String,
+  nbBatch: Number,
+  work: String,
+  company: String,
+  typeWork: String,
 });
 
 var BuddyModel = mongoose.model("buddies", buddySchema);
