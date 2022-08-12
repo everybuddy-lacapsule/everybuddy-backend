@@ -4,7 +4,7 @@ var UserModel = require("../models/users");
 var cloudinary = require("cloudinary").v2;
 const fs = require("fs");
 var uniqid = require("uniqid");
-var mongoose = require ("mongoose");
+var mongoose = require("mongoose");
 
 require("dotenv").config();
 const { API_MAP_TOKEN, CLOUD_NAME, API_KEY, API_SECRET } = process.env;
@@ -16,6 +16,7 @@ cloudinary.config({
 });
 
 const NodeGeocoder = require("node-geocoder");
+const UserTokenModel = require("../models/userTokens");
 const options = {
   provider: "google",
 
@@ -230,27 +231,57 @@ router.post("/upload", async function (req, res, next) {
 
 // ROUTE POUR RECUPERER LE USER PARTIEL EN BDD POUR LA DISCUSSION
 router.get("/getUserDiscussion", async (req, res, next) => {
-	let userDatas;
-	try {
-	  if (mongoose.Types.ObjectId.isValid(req.query.userID)) {
-		var user = await UserModel.findOne({
-		  _id: req.query.userID,
-		});
-		if (user) {
-		userDatas = {
-			_id: user._id,
-			name: user.name,
-			firstName: user.firstName,
-			avatar: user.avatar
-		  };
-		}
-		res.json({ userDatas });
-	  } else {
-		console.log("te roi");
-	  }
-	} catch (error) {
-	  console.log(error);
-	}
-  });
+  let userDatas;
+  try {
+    if (mongoose.Types.ObjectId.isValid(req.query.userID)) {
+      var user = await UserModel.findOne({
+        _id: req.query.userID,
+      });
+      if (user) {
+        userDatas = {
+          _id: user._id,
+          name: user.name,
+          firstName: user.firstName,
+          avatar: user.avatar,
+        };
+      }
+      res.json({ userDatas });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
 
+// ROUTE QUI VERIFIE OU UPDATE USERTOKEN => PERMETTRE ENVOYER LA NOTIFICATION
+router.post("/userToken", async function (req, res, next) {
+  try {
+    let userToken = await UserTokenModel.findOne({ userID: req.body.userID });
+    if (userToken.userToken === req.body.userToken) {
+      res.status(200).json(true);
+    } else {
+      await UserTokenModel.updateOne(
+        { userID: req.body.userID },
+        { $set: { userToken: req.body.userToken } }
+      );
+    }
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// ROUTE QUI VERIFIE OU UPDATE USERTOKEN => PERMETTRE ENVOYER LA NOTIFICATION
+router.get("/userToken", async function (req, res, next) {
+  let success = false;
+  try {
+    let userToken = await UserTokenModel.findOne({ userID: req.body.userID });
+    if (userToken) {
+      success = true;
+      res.status(200).json({ success, userToken: userToken.userToken });
+    } else {
+      res.status(200).json({ success });
+    }
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
 module.exports = router;
