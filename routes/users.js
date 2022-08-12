@@ -16,7 +16,7 @@ cloudinary.config({
 });
 
 const NodeGeocoder = require("node-geocoder");
-const UserTokenModel = require("../models/userTokens");
+const UserDeviceTokenModel = require("../models/userDeviceTokens");
 const options = {
   provider: "google",
 
@@ -253,16 +253,26 @@ router.get("/getUserDiscussion", async (req, res, next) => {
 });
 
 // ROUTE QUI VERIFIE OU UPDATE USERTOKEN => PERMETTRE ENVOYER LA NOTIFICATION
-router.post("/userToken", async function (req, res, next) {
+router.post("/deviceToken", async function (req, res, next) {
   try {
-    let userToken = await UserTokenModel.findOne({ userID: req.body.userID });
-    if (userToken.userToken === req.body.userToken) {
+    let userToken = await UserDeviceTokenModel.find({
+      userID: req.body.userID,
+    });
+    if (userToken.length === 0) {
+      const newUserDeviceToken = new UserDeviceTokenModel({
+        userID: req.body.userID,
+        deviceToken: req.body.deviceToken,
+      });
+      const userDeviceTokenSaved = await newUserDeviceToken.save();
+      res.status(200).json(true);
+    } else if (userToken.deviceToken === req.body.deviceToken) {
       res.status(200).json(true);
     } else {
-      await UserTokenModel.updateOne(
+      await UserDeviceTokenModel.updateOne(
         { userID: req.body.userID },
-        { $set: { userToken: req.body.userToken } }
+        { $set: { deviceToken: req.body.deviceToken } }
       );
+      res.status(200).json(true);
     }
   } catch (error) {
     res.status(500).json(error);
@@ -270,15 +280,16 @@ router.post("/userToken", async function (req, res, next) {
 });
 
 // ROUTE QUI VERIFIE OU UPDATE USERTOKEN => PERMETTRE ENVOYER LA NOTIFICATION
-router.get("/userToken", async function (req, res, next) {
-  let success = false;
+router.get("/deviceToken", async function (req, res, next) {
   try {
-    let userToken = await UserTokenModel.findOne({ userID: req.body.userID });
-    if (userToken) {
-      success = true;
-      res.status(200).json({ success, userToken: userToken.userToken });
+    let deviceToken = await UserDeviceTokenModel.find({
+      userID: req.query.userID,
+    });
+    if (deviceToken.length > 0) {
+      res.status(200).json({ deviceToken });
     } else {
-      res.status(200).json({ success });
+      //console.log("deviceTokenFalse", deviceToken);
+      res.status(404);
     }
   } catch (error) {
     res.status(500).json(error);
