@@ -5,11 +5,20 @@ const DiscussionModel = require("../models/discussions");
 
 /*---POST: create a discussion for users if not exist---*/
 router.post("/createDiscussion", async function (req, res, next) {
+  let discussion;
   try {
-    // Find discussion in DB (WITHOUT regard to ORDER or other elements in the array by using $all operator)
-    const discussion = await DiscussionModel.findOne({
-      memberIDs: { $all: [req.body.senderID, req.body.receiverID] },
-    });
+    if (req.body.senderID === req.body.receiverID) {
+      discussion = await DiscussionModel.findOne({
+        memberIDs: [req.body.senderID, req.body.receiverID],
+      });
+      // If discussion exist => send discussionID to Front
+    } else {
+      // Find discussion in DB (WITHOUT regard to ORDER or other elements in the array by using $all operator)
+      discussion = await DiscussionModel.findOne({
+        memberIDs: { $all: [req.body.senderID, req.body.receiverID] },
+      });
+    }
+
     // If discussion exist => send discussionID to Front
     if (discussion) {
       res.status(200).json(discussion._id);
