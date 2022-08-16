@@ -252,7 +252,7 @@ router.get("/getUserDiscussion", async (req, res, next) => {
   }
 });
 
-// ROUTE QUI VERIFIE OU UPDATE USERTOKEN => PERMETTRE ENVOYER LA NOTIFICATION
+// ROUTE QUI VERIFIE OU UPDATE DEVICETOKEN => PERMETTRE ENVOYER LA NOTIFICATION
 router.post("/deviceToken", async function (req, res, next) {
   try {
     let userToken = await UserDeviceTokenModel.find({
@@ -279,7 +279,7 @@ router.post("/deviceToken", async function (req, res, next) {
   }
 });
 
-// ROUTE QUI VERIFIE OU UPDATE USERTOKEN => PERMETTRE ENVOYER LA NOTIFICATION
+// ROUTE QUI RECUPERE DEVICETOKEN BY USERID => PERMETTRE ENVOYER LA NOTIFICATION
 router.get("/deviceToken", async function (req, res, next) {
   try {
     let deviceToken = await UserDeviceTokenModel.find({
