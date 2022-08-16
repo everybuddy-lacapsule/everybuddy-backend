@@ -4,7 +4,7 @@ var UserModel = require("../models/users");
 var cloudinary = require("cloudinary").v2;
 const fs = require("fs");
 var uniqid = require("uniqid");
-var mongoose = require ("mongoose");
+var mongoose = require("mongoose");
 
 require("dotenv").config();
 const { API_MAP_TOKEN, CLOUD_NAME, API_KEY, API_SECRET } = process.env;
@@ -16,6 +16,7 @@ cloudinary.config({
 });
 
 const NodeGeocoder = require("node-geocoder");
+const UserDeviceTokenModel = require("../models/userDeviceTokens");
 const options = {
   provider: "google",
 
@@ -230,27 +231,68 @@ router.post("/upload", async function (req, res, next) {
 
 // ROUTE POUR RECUPERER LE USER PARTIEL EN BDD POUR LA DISCUSSION
 router.get("/getUserDiscussion", async (req, res, next) => {
-	let userDatas;
-	try {
-	  if (mongoose.Types.ObjectId.isValid(req.query.userID)) {
-		var user = await UserModel.findOne({
-		  _id: req.query.userID,
-		});
-		if (user) {
-		userDatas = {
-			_id: user._id,
-			name: user.name,
-			firstName: user.firstName,
-			avatar: user.avatar
-		  };
-		}
-		res.json({ userDatas });
-	  } else {
-		console.log("te roi");
-	  }
-	} catch (error) {
-	  console.log(error);
-	}
-  });
+  let userDatas;
+  try {
+    if (mongoose.Types.ObjectId.isValid(req.query.userID)) {
+      var user = await UserModel.findOne({
+        _id: req.query.userID,
+      });
+      if (user) {
+        userDatas = {
+          _id: user._id,
+          name: user.name,
+          firstName: user.firstName,
+          avatar: user.avatar,
+        };
+      }
+      res.json({ userDatas });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
 
+// ROUTE QUI VERIFIE OU UPDATE DEVICETOKEN => PERMETTRE ENVOYER LA NOTIFICATION
+router.post("/deviceToken", async function (req, res, next) {
+  try {
+    let userToken = await UserDeviceTokenModel.find({
+      userID: req.body.userID,
+    });
+    if (userToken.length === 0) {
+      const newUserDeviceToken = new UserDeviceTokenModel({
+        userID: req.body.userID,
+        deviceToken: req.body.deviceToken,
+      });
+      const userDeviceTokenSaved = await newUserDeviceToken.save();
+      res.status(200).json(true);
+    } else if (userToken.deviceToken === req.body.deviceToken) {
+      res.status(200).json(true);
+    } else {
+      await UserDeviceTokenModel.updateOne(
+        { userID: req.body.userID },
+        { $set: { deviceToken: req.body.deviceToken } }
+      );
+      res.status(200).json(true);
+    }
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// ROUTE QUI RECUPERE DEVICETOKEN BY USERID => PERMETTRE ENVOYER LA NOTIFICATION
+router.get("/deviceToken", async function (req, res, next) {
+  try {
+    let deviceToken = await UserDeviceTokenModel.find({
+      userID: req.query.userID,
+    });
+    if (deviceToken.length > 0) {
+      res.status(200).json({ deviceToken });
+    } else {
+      //console.log("deviceTokenFalse", deviceToken);
+      res.status(404);
+    }
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
 module.exports = router;

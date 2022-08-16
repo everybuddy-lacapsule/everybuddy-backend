@@ -2,7 +2,6 @@ var express = require("express");
 var router = express.Router();
 var UserModel = require("../models/users");
 var DiscussionModel = require("../models/discussions");
-var BuddyModel = require("../models/buddies");
 const axios = require("axios");
 require("dotenv").config();
 const { API_MAP_TOKEN } = process.env;
